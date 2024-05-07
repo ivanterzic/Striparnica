@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model artikal {
+  idartikla        Int               @id @default(autoincrement())
+  naziv            String            @db.VarChar(50)
+  opis             String            @db.VarChar(100)
+  dostupnakolicina Int
+  cijena           Float
+  pdv              Float
+  izdavac          String            @db.VarChar(50)
+  izdanje          String            @db.VarChar(50)
+  collectible      collectible?
+  narudzbaartikli  narudzbaartikli[]
+  racunartikli     racunartikli[]
+  strip            strip?
+}
+
+model collectible {
+  idartikla  Int     @id
+  masa       Float
+  pakiranje  String  @db.VarChar(30)
+  dimenzije  String  @db.VarChar(20)
+  proizvodac String  @db.VarChar(50)
+  artikal    artikal @relation(fields: [idartikla], references: [idartikla], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model dobavljac {
+  iddobavljaca    Int        @id @default(autoincrement())
+  ime             String     @db.VarChar(50)
+  adresa          String     @db.VarChar(50)
+  email           String     @unique @db.VarChar(50)
+  imevlasnika     String     @db.VarChar(30)
+  prezimevlasnika String     @db.VarChar(30)
+  narudzba        narudzba[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model narudzba {
+  idnarudzbe      Int               @id @default(autoincrement())
+  datumstvaranja  DateTime          @db.Date
+  datumzaprimanja DateTime?         @db.Date
+  status          String            @db.VarChar(30)
+  iddobavljaca    Int
+  mbrreferenta    String            @db.VarChar(15)
+  dobavljac       dobavljac         @relation(fields: [iddobavljaca], references: [iddobavljaca], onDelete: NoAction, onUpdate: NoAction)
+  zaposlenik      zaposlenik        @relation(fields: [mbrreferenta], references: [mbr], onDelete: NoAction, onUpdate: NoAction)
+  narudzbaartikli narudzbaartikli[]
+}
+
+model narudzbaartikli {
+  idartikla  Int
+  idnarudzbe Int
+  kolicina   Int
+  artikal    artikal  @relation(fields: [idartikla], references: [idartikla], onDelete: NoAction, onUpdate: NoAction)
+  narudzba   narudzba @relation(fields: [idnarudzbe], references: [idnarudzbe], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([idnarudzbe, idartikla])
+}
+
+model racun {
+  idracuna       Int            @id @default(autoincrement())
+  datumizdavanja DateTime       @db.Date
+  nacinplacanja  String         @db.VarChar(15)
+  blagajna       Int
+  mbrprodavaca   String         @db.VarChar(15)
+  zaposlenik     zaposlenik     @relation(fields: [mbrprodavaca], references: [mbr], onDelete: NoAction, onUpdate: NoAction)
+  racunartikli   racunartikli[]
+}
+
+model racunartikli {
+  idartikla Int
+  idracuna  Int
+  kolicina  Int
+  artikal   artikal @relation(fields: [idartikla], references: [idartikla], onDelete: NoAction, onUpdate: NoAction)
+  racun     racun   @relation(fields: [idracuna], references: [idracuna], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([idartikla, idracuna])
+}
+
+model strip {
+  idartikla    Int         @id
+  brojstranica Int
+  jezik        String      @db.VarChar(30)
+  autor        String      @db.VarChar(50)
+  artikal      artikal     @relation(fields: [idartikla], references: [idartikla], onDelete: NoAction, onUpdate: NoAction)
+  stripzanr    stripzanr[]
+}
+
+model stripzanr {
+  idartikla Int
+  idzanra   Int
+  strip     strip @relation(fields: [idartikla], references: [idartikla], onDelete: NoAction, onUpdate: NoAction)
+  zanr      zanr  @relation(fields: [idzanra], references: [idzanra], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([idartikla, idzanra])
+}
+
+model uloga {
+  iduloge    Int          @id @default(autoincrement())
+  naziv      String       @unique @db.VarChar(50)
+  placa      Float
+  zaposlenik zaposlenik[]
+}
+
+model zanr {
+  idzanra    Int         @id @default(autoincrement())
+  naziv      String      @db.VarChar(50)
+  idnadzanr  Int?
+  stripzanr  stripzanr[]
+  zanr       zanr?       @relation("zanrTozanr", fields: [idnadzanr], references: [idzanra], onDelete: NoAction, onUpdate: NoAction)
+  other_zanr zanr[]      @relation("zanrTozanr")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model zaposlenik {
+  mbr             String     @id @db.VarChar(15)
+  ime             String     @db.VarChar(30)
+  prezime         String     @db.VarChar(30)
+  email           String     @unique @db.VarChar(50)
+  oib             String     @unique @db.Char(11)
+  datumrodenja    DateTime   @db.Date
+  spol            String     @db.Char(1)
+  telefon         String     @db.VarChar(20)
+  lozinka         String     @db.VarChar(30)
+  datumzaposlenja DateTime   @db.Date
+  datumotpustanja DateTime?  @db.Date
+  iduloge         Int
+  narudzba        narudzba[]
+  racun           racun[]
+  uloga           uloga      @relation(fields: [iduloge], references: [iduloge], onDelete: NoAction, onUpdate: NoAction)
+}
