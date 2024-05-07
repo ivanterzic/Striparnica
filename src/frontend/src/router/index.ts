@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import NarudzbeView from "../views/NarudzbeView.vue";
 import NarudzbaView from "../views/NarudzbaView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
@@ -10,7 +10,7 @@ const routes: Array<RouteRecordRaw> = [
         component: NarudzbeView,
     },
     {
-        path: "/narudzba/:id",
+        path: "/narudzbe/:id",
         name: "narudzba",
         component: NarudzbaView,
         props: true,
@@ -23,7 +23,7 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes,
 });
 

@@ -1,8 +1,10 @@
 <template>
     <div>
         <nav class="font-large back-light-gray">
-            <div>Striparnica</div>
-            <router-link to="/narudzbe">Narudžbe</router-link>
+            <div class="nav-element">Striparnica</div>
+            <router-link to="/narudzbe" :class="{ 'back-dark-gray': $route.path === '/narudzbe' }" class="nav-element"
+                >Narudžbe</router-link
+            >
             <!-- <router-link to="/zaposlenici">Zaposlenici</router-link> -->
         </nav>
         <router-view />
@@ -10,45 +12,42 @@
 </template>
 
 <style>
-#app {
-    font-family: "Roboto", sans-serif;
-    font-weight: 500;
-    font-style: normal;
-}
-body {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-}
 nav {
+    height: 10vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     padding: 25px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
-
 nav a {
-    text-decoration: none;
-    color: #333;
-    padding: 8px 12px;
-    margin-right: 10px;
     border-radius: 3px;
     transition: background-color 0.3s ease;
+    border: 2px solid black;
 }
-
 nav div {
     display: inline-block;
-    color: #333;
-    padding: 8px 12px;
-    margin-right: 10px;
+    border: 2px solid red;
+    font-weight: 700;
 }
-
 nav a:hover {
     background-color: #ddd;
+}
+.nav-element {
+    text-decoration: none;
+    color: black;
+    padding: 8px;
+    margin-right: 15px;
 }
 .font-large {
     font-size: 20px;
 }
 .button-link {
     display: inline-block;
-    padding: 15px;
+    padding: 10px;
     border-radius: 3px;
 }
 .button-link:hover {

@@ -9,6 +9,7 @@
             </thead>
             <tbody>
                 <tr v-for="(narudzba, index) in narudzbe" :key="index">
+                    <td>{{ index }}</td>
                     <td>{{ narudzba.datumStvaranja }}</td>
                     <td>{{ narudzba.datumZaprimanja || "-" }}</td>
                     <td>{{ narudzba.status }}</td>
@@ -32,6 +33,7 @@ export default defineComponent({
         return {
             narudzbeURL: "http://localhost:3000/narudzbe",
             zaglavlja: [
+                "#",
                 "Datum Stvaranja",
                 "Datum Zaprimanja",
                 "Status",
@@ -40,6 +42,134 @@ export default defineComponent({
                 "",
             ] as string[],
             narudzbe: [
+                {
+                    idNarudzbe: 1,
+                    datumStvaranja: "2023-01-15",
+                    datumZaprimanja: null,
+                    status: "u tijeku",
+                    idDobavljaca: 3,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 2,
+                    datumStvaranja: "2023-02-22",
+                    datumZaprimanja: "2023-03-05",
+                    status: "potvrdena",
+                    idDobavljaca: 2,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 3,
+                    datumStvaranja: "2023-03-08",
+                    datumZaprimanja: null,
+                    status: "u tijeku",
+                    idDobavljaca: 4,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 1,
+                    datumStvaranja: "2023-01-15",
+                    datumZaprimanja: null,
+                    status: "u tijeku",
+                    idDobavljaca: 3,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 2,
+                    datumStvaranja: "2023-02-22",
+                    datumZaprimanja: "2023-03-05",
+                    status: "potvrdena",
+                    idDobavljaca: 2,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 3,
+                    datumStvaranja: "2023-03-08",
+                    datumZaprimanja: null,
+                    status: "u tijeku",
+                    idDobavljaca: 4,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 1,
+                    datumStvaranja: "2023-01-15",
+                    datumZaprimanja: null,
+                    status: "u tijeku",
+                    idDobavljaca: 3,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 2,
+                    datumStvaranja: "2023-02-22",
+                    datumZaprimanja: "2023-03-05",
+                    status: "potvrdena",
+                    idDobavljaca: 2,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 3,
+                    datumStvaranja: "2023-03-08",
+                    datumZaprimanja: null,
+                    status: "u tijeku",
+                    idDobavljaca: 4,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 1,
+                    datumStvaranja: "2023-01-15",
+                    datumZaprimanja: null,
+                    status: "u tijeku",
+                    idDobavljaca: 3,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 2,
+                    datumStvaranja: "2023-02-22",
+                    datumZaprimanja: "2023-03-05",
+                    status: "potvrdena",
+                    idDobavljaca: 2,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 3,
+                    datumStvaranja: "2023-03-08",
+                    datumZaprimanja: null,
+                    status: "u tijeku",
+                    idDobavljaca: 4,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 2,
+                    datumStvaranja: "2023-02-22",
+                    datumZaprimanja: "2023-03-05",
+                    status: "potvrdena",
+                    idDobavljaca: 2,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 3,
+                    datumStvaranja: "2023-03-08",
+                    datumZaprimanja: null,
+                    status: "u tijeku",
+                    idDobavljaca: 4,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 2,
+                    datumStvaranja: "2023-02-22",
+                    datumZaprimanja: "2023-03-05",
+                    status: "potvrdena",
+                    idDobavljaca: 2,
+                    MBRReferenta: "1006474746334",
+                },
+                {
+                    idNarudzbe: 3,
+                    datumStvaranja: "2023-03-08",
+                    datumZaprimanja: null,
+                    status: "u tijeku",
+                    idDobavljaca: 4,
+                    MBRReferenta: "1006474746334",
+                },
                 {
                     idNarudzbe: 1,
                     datumStvaranja: "2023-01-15",
@@ -79,7 +209,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 h2 {
     width: 95%;
     margin: 25px auto;
@@ -91,28 +221,23 @@ table {
     margin: auto;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 th {
-    color: #333;
     font-weight: bold;
-    padding: 25px 20px;
+    padding: 25px 10px;
     text-align: left;
     border-bottom: 2px solid #ddd;
     position: sticky;
-    top: 0;
+    top: 9.9vh;
     z-index: 1;
 }
-
 tr:nth-child(even) {
     background-color: #f9f9f9;
 }
-
 tr:nth-child(odd) {
     background-color: #e9e9e9;
 }
-
 td {
-    padding: 20px;
+    padding: 8px 10px;
     border-bottom: 1px solid #ddd;
 }
 </style>
