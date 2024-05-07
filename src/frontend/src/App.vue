@@ -1,30 +1,57 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+    <div>
+        <nav class="font-large back-light-gray">
+            <div>Striparnica</div>
+            <router-link to="/narudzbe">Narudžbe</router-link>
+            <!-- <router-link to="/zaposlenici">Zaposlenici</router-link> -->
+        </nav>
+        <router-view />
+    </div>
 </template>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    font-style: normal;
 }
-
+body {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
 nav {
-  padding: 30px;
+    padding: 25px;
 }
 
 nav a {
-  font-weight: bold;
-  color: #2c3e50;
+    text-decoration: none;
+    color: #333;
+    padding: 8px 12px;
+    margin-right: 10px;
+    border-radius: 3px;
+    transition: background-color 0.3s ease;
 }
 
-nav a.router-link-exact-active {
-  color: #42b983;
+nav div {
+    display: inline-block;
+    color: #333;
+    padding: 8px 12px;
+    margin-right: 10px;
+}
+
+nav a:hover {
+    background-color: #ddd;
+}
+.font-large {
+    font-size: 20px;
+}
+.button-link {
+    display: inline-block;
+    padding: 15px;
+    border-radius: 3px;
+}
+.button-link:hover {
+    cursor: pointer;
 }
 </style>
