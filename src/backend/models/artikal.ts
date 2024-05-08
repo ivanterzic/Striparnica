@@ -24,18 +24,18 @@ const artikalClass =
             this.izdanje = izdanje;
         }
 
+        static async dohvatiSveArtikle() {
+            let artikli = await prisma.artikal.findMany();
+            return artikli;
+        }
+
         static async dohvatiArtikal(id: number) {
-            prisma.artikal.findUnique({
+            let artikal = await prisma.artikal.findUnique({
                 where: {
                     idartikla: id
                 }
-            })
-                .then((result) => {
-                    return result;
-                })
-                .catch((error) => {
-                    return error;
-                });
+            });
+            return artikal;
         }
     }
 
