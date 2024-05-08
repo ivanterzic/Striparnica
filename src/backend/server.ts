@@ -1,6 +1,7 @@
 
 const express = require('express');
 const { Application } = require('express');
+const bodyParser = require('body-parser');
 
 import narudzbaRoutes from './routes/narudzba.routes';
 import dobavljacRoutes from './routes/dobavljac.routes';
@@ -11,11 +12,10 @@ const app = express();
 const port = 3000;
 
 //body parser
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-//serve static files
-app.use(express.static('public'));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
 
 app.use('/dobavljac', dobavljacRoutes);
 app.use('/narudzba', narudzbaRoutes);
