@@ -1,6 +1,9 @@
 <template>
     <div>
-        <NarudzbaForm :narudzba="filteredNarudzba" />
+        <div class="form-button nav-button back-blue">Prethodna</div>
+        <div class="form-button nav-button back-blue">Sljedeća</div>
+        <NarudzbaForm :narudzba="filteredNarudzba" :id="narudzba.idNarudzbe" />
+        <h2>Lista artikala</h2>
     </div>
 </template>
 
@@ -24,9 +27,18 @@ export default defineComponent({
                 idNarudzbe: 3,
                 datumStvaranja: "2023-03-08",
                 datumZaprimanja: null,
-                status: "u tijeku",
-                idDobavljaca: 4,
-                MBRReferenta: "1006474746334",
+                status: {
+                    trenutno: "u tijeku",
+                    moguce: ["potvrdena", "u tijeku", "nepotvrdena"],
+                },
+                idDobavljaca: {
+                    trenutno: 4,
+                    moguce: [2, 3, 4],
+                },
+                MBRReferenta: {
+                    trenutno: "1006474746334",
+                    moguce: ["1006474746334", "3824629348629", "..."],
+                },
                 stripovi: [],
                 collectibles: [],
             },
@@ -42,3 +54,12 @@ export default defineComponent({
     },
 });
 </script>
+
+<style scoped>
+.nav-button {
+    display: inline-block;
+    margin-top: 25px;
+    margin-left: 25px;
+    margin-right:0
+}
+</style>

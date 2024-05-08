@@ -2,11 +2,16 @@
     <div class="form">
         <div v-for="(key, index) in Object.keys(narudzba)" :key="index" class="form-group">
             <label>{{ key }}</label>
-            <input type="text" v-model="narudzba[key]" />
+            <input v-if="key == 'datumStvaranja' || key == 'datumZaprimanja'" type="date" v-model="narudzba[key]" />
+            <select v-else v-model="narudzba[key].trenutno">
+                <option v-for="mogucnost in narudzba[key].moguce" :key="mogucnost">
+                    {{ mogucnost }}
+                </option>
+            </select>
         </div>
         <div class="form-buttons">
-            <div class="form-button back-green">Spremi</div>
-            <div class="form-button back-red">Obriši</div>
+            <div class="form-button back-green" @click="updateNarudzba">Spremi</div>
+            <div class="form-button back-red" @click="deleteNarudzba">Obriši</div>
         </div>
     </div>
 </template>
@@ -20,11 +25,23 @@ export default defineComponent({
             type: Object as PropType<Narudzba>,
             required: true,
         },
+        id: {
+            type: Number,
+            required: true,
+        },
+    },
+    methods: {
+        updateNarudzba(): void {
+            console.log(this.narudzba);
+        },
+        deleteNarudzba(): void {
+            console.log("brisem");
+        },
     },
 });
 </script>
 
-<style scoped>
+<style>
 .form {
     width: 40vw;
     height: 40vh;
@@ -32,7 +49,7 @@ export default defineComponent({
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
-    margin: 15px;
+    margin: 25px;
 }
 
 .form-group {
@@ -64,11 +81,15 @@ label {
     font-weight: bold;
 }
 
-input[type="text"] {
+input,
+select {
     width: 70%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
+}
+option {
+    font-size: 14px;
 }
 </style>
