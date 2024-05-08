@@ -8,6 +8,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Narudzba } from "../types/Narudzba";
+import { Zaglavlje } from "../types/Zaglavlje";
 import Table from "../components/Table.vue";
 
 export default defineComponent({
@@ -15,6 +16,7 @@ export default defineComponent({
     data() {
         return {
             narudzbeURL: "http://localhost:3000/narudzbe" as string,
+            narudzbe: [] as Narudzba[],
             zaglavlja: [
                 { displayName: "ID narudžbe", sqlName: "idnarudzbe" },
                 { displayName: "Datum stvaranja", sqlName: "datumstvaranja" },
@@ -22,22 +24,11 @@ export default defineComponent({
                 { displayName: "Status", sqlName: "status" },
                 { displayName: "ID dobavljača", sqlName: "iddobavljaca" },
                 { displayName: "MBR referenta", sqlName: "mbrreferenta" },
-            ],
-            narudzbe: [] as Narudzba[],
+            ] as Zaglavlje[],
         };
     },
     mounted() {
-        for (let i = 0; i < 25; i++) {
-            this.narudzbe.push({
-                idnarudzbe: 3,
-                datumstvaranja: "2023-03-08",
-                datumzaprimanja: null,
-                status: "u tijeku",
-                iddobavljaca: 4,
-                mbrreferenta: "1006474746334",
-            });
-        }
-        //this.dohvatiNarudzbe()
+        this.dohvatiNarudzbe();
     },
     methods: {
         async dohvatiNarudzbe(): Promise<void> {
