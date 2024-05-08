@@ -8,8 +8,8 @@ const router = Router();
 router.get('/stranikljucevi', NarudzbaController.apiDohvatSvihStranihKljuceva); //testirano
 router.get('/statusi', NarudzbaController.apiDohvatiSveStatuseNarudzbi); //testirano
 
-router.get('/next/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimVecimID); //testirano
-router.get('/previous/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimManjimID); //testirano
+router.get('/sljedeca/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimVecimID); //testirano
+router.get('/prethodna/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimManjimID); //testirano
 
 router.get('/:id', NarudzbaController.apiDohvatiNarudzbu); //testirano
 router.get('/', NarudzbaController.apiDohvatiSveNarudzbe); //testirano
