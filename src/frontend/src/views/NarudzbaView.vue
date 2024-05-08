@@ -2,13 +2,13 @@
     <div>
         <div class="form-button nav-button back-blue">Prethodna</div>
         <div class="form-button nav-button back-blue">Sljedeća</div>
-        <NarudzbaForm :narudzba="filteredNarudzba" :id="narudzba.idNarudzbe" :mogucnosti="mogucnosti" />
+        <NarudzbaForm :narudzba="narudzba" :id="narudzba.idNarudzbe" :mogucnosti="mogucnosti" />
         <h2>Lista artikala</h2>
-        <Table :zaglavlja="zaglavlja" :retci="narudzba.artikli" :content="'artikli'" />
+        <Table :zaglavlja="zaglavlja" :retci="artikli" :content="'artikli'" :id="id" />
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import NarudzbaForm from "../components/NarudzbaForm.vue";
 import Table from "../components/Table.vue";
@@ -27,53 +27,48 @@ export default defineComponent({
             narudzbaBaseURL: "http://localhost:3000/",
             mogucnostiURL: "http://localhost:3000/mogucnosti",
             zaglavlja: [
-                { displayName: "ID artikla", sqlName: "idArtikla" },
                 { displayName: "Naziv artikla", sqlName: "naziv" },
                 { displayName: "Opis artikla", sqlName: "opis" },
-                { displayName: "Dostupna količina", sqlName: "dostupnaKolicina" },
                 { displayName: "Cijena", sqlName: "cijena" },
-                { displayName: "PDV", sqlName: "PDV" },
+                { displayName: "PDV", sqlName: "pdv" },
                 { displayName: "Izdavač", sqlName: "izdavac" },
                 { displayName: "Izdanje", sqlName: "izdanje" },
+                { displayName: "Dostupna količina", sqlName: "dostupnakolicina" },
+                { displayName: "Tražena količina", sqlName: "kolicina" },
             ],
             narudzba: {
-                idNarudzbe: 3,
-                datumStvaranja: "2023-03-08",
-                datumZaprimanja: null,
+                idnarudzbe: 3,
+                datumstvaranja: "2023-03-08",
+                datumzaprimanja: null,
                 status: "u tijeku",
-                idDobavljaca: 4,
-                MBRReferenta: "1006474746334",
-                artikli: [],
+                iddobavljaca: 4,
+                mbrreferenta: "1006474746334",
             },
+            artikli: [] as Artikal[],
             mogucnosti: {
                 status: ["potvrdena", "u tijeku", "nepotvrdena"],
-                idDobavljaca: [2, 3, 4],
-                MBRReferenta: ["1006474746334", "3824629348629", "..."],
+                iddobavljaca: [2, 3, 4],
+                mbrreferenta: ["1006474746334", "3824629348629", "..."],
             },
         };
     },
     computed: {
-        filteredNarudzba() {
-            let pairs = Object.entries(this.narudzba).filter(
-                ([key, value]) => key !== "idNarudzbe" && key !== "artikli"
-            );
-            return Object.fromEntries(pairs);
-        },
-        narudzbaURL() {
+        narudzbaURL(): string {
             return this.narudzbaBaseURL + this.id;
         },
     },
     mounted() {
         for (let i = 0; i < 25; i++) {
-            this.narudzba.artikli.push({
-                idArtikla: 2,
+            this.artikli.push({
+                idartikla: 2,
                 naziv: "strip",
                 opis: "opis",
-                dostupnaKolicina: 4,
+                dostupnakolicina: 12,
                 cijena: 7,
-                PDV: 0.34,
+                pdv: 0.34,
                 izdavac: "dinamo",
                 izdanje: "prvo",
+                kolicina: 4,
                 edit: false,
             });
         }

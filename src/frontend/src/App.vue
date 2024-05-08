@@ -5,7 +5,6 @@
             <router-link to="/narudzbe" :class="{ 'back-dark-gray': $route.path === '/narudzbe' }" class="nav-element"
                 >Narudžbe</router-link
             >
-            <!-- <router-link to="/zaposlenici">Zaposlenici</router-link> -->
         </nav>
         <router-view />
     </div>
@@ -47,7 +46,7 @@ nav a:hover {
     display: inline-block;
     padding: 10px;
     border-radius: 3px;
-    margin-right: 10px
+    margin-right: 20px;
 }
 .button-link:hover {
     cursor: pointer;

@@ -14,14 +14,14 @@ export default defineComponent({
     components: { Table },
     data() {
         return {
-            narudzbeURL: "http://localhost:3000/narudzbe",
+            narudzbeURL: "http://localhost:3000/narudzbe" as string,
             zaglavlja: [
-                { displayName: "ID narudžbe", sqlName: "idNarudzbe" },
-                { displayName: "Datum Stvaranja", sqlName: "datumStvaranja" },
-                { displayName: "Datum Zaprimanja", sqlName: "datumZaprimanja" },
+                { displayName: "ID narudžbe", sqlName: "idnarudzbe" },
+                { displayName: "Datum stvaranja", sqlName: "datumstvaranja" },
+                { displayName: "Datum zaprimanja", sqlName: "datumzaprimanja" },
                 { displayName: "Status", sqlName: "status" },
-                { displayName: "ID Dobavljača", sqlName: "idDobavljaca" },
-                { displayName: "MBR Referenta", sqlName: "MBRReferenta" },
+                { displayName: "ID dobavljača", sqlName: "iddobavljaca" },
+                { displayName: "MBR referenta", sqlName: "mbrreferenta" },
             ],
             narudzbe: [] as Narudzba[],
         };
@@ -29,19 +29,18 @@ export default defineComponent({
     mounted() {
         for (let i = 0; i < 25; i++) {
             this.narudzbe.push({
-                idNarudzbe: 3,
-                datumStvaranja: "2023-03-08",
-                datumZaprimanja: null,
+                idnarudzbe: 3,
+                datumstvaranja: "2023-03-08",
+                datumzaprimanja: null,
                 status: "u tijeku",
-                idDobavljaca: 4,
-                MBRReferenta: "1006474746334",
-                edit: false,
+                iddobavljaca: 4,
+                mbrreferenta: "1006474746334",
             });
         }
         //this.dohvatiNarudzbe()
     },
     methods: {
-        async dohvatiNarudzbe() {
+        async dohvatiNarudzbe(): Promise<void> {
             try {
                 let response = await fetch(this.narudzbeURL, {
                     method: "GET",
@@ -50,7 +49,7 @@ export default defineComponent({
                     },
                 });
                 if (!response.ok) {
-                    throw new Error("Server problem");
+                    throw new Error("Greška kod dohvaćanja narudžbi s poslužitelja");
                 }
                 this.narudzbe = await response.json();
             } catch (error) {

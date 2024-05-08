@@ -5,13 +5,6 @@
     </div>
 </template>
 
-<script>
-import { defineComponent } from "vue";
-export default defineComponent({
-    name: "NotFound",
-});
-</script>
-
 <style scoped>
 .not-found {
     text-align: center;
