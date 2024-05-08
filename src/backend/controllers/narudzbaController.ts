@@ -4,6 +4,7 @@ import { Zaposlenik } from '../models/zaposlenik';
 import { Dobavljac } from '../models/dobavljac';
 import { Artikal } from '../models/artikal';
 import { parse } from 'path';
+import { artikal } from '@prisma/client';
 
 export class NarudzbaController{
 
@@ -22,17 +23,17 @@ export class NarudzbaController{
             let id = parseInt(req.params.id);
             let result = await Narudzba.dohvatiNarudzbu(id);
             let narudzba = result.narudzba;
-            let updatedArtikli = [];
+            let updatedArtikli: Array<artikal & { kolicina: number }> = [];
             for (let artikal of result.artikli) {
                 let a = await Artikal.dohvatiArtikal(artikal.idartikla);
                 updatedArtikli.push({
-                    arikal : a,
-                    kolicina : artikal.kolicina
-                });
+                    ...a,
+                    kolicina: artikal.kolicina
+                } as artikal & { kolicina: number });
             }
             res.json({
-                narudzba : narudzba,
-                artikli : updatedArtikli
+                narudzba: narudzba,
+                artikli: updatedArtikli
             });
                 
         }
@@ -59,7 +60,12 @@ export class NarudzbaController{
             res.json({
                 mbrreferanata: mbrreferenata.map((z) => z.mbr),
                 statusi: statusi, 
-                iddobavljaca : iddobavljaca.map((d) => d.iddobavljaca)
+                dobavljaci : iddobavljaca.map((d) => {
+                    return {
+                        id: d.iddobavljaca,
+                        ime: d.ime
+                    }
+                })
             });
         }
         catch (err) {
