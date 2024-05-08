@@ -1,29 +1,23 @@
 <template>
     <table class="table">
-        <thead>
-            <tr>
-                <th class="back-light-gray">#</th>
-                <th v-for="zaglavlje in zaglavlja" :key="zaglavlje" class="back-light-gray">
-                    {{ zaglavlje.displayName }}
-                </th>
-                <th class="back-light-gray"></th>
-            </tr>
-        </thead>
+        <TableHead :zaglavlja="zaglavlja" :content="content" />
         <tbody>
             <tr v-for="(redak, index) in retci" :key="index">
-                <td :class="{ 'artikli-padding': content != 'narudzbe' }">{{ index }}</td>
+                <td v-if="content == 'narudzbe'" :class="{ 'artikli-padding': content != 'narudzbe' }">{{ index }}</td>
                 <td
                     v-for="zaglavlje in zaglavlja"
                     :key="zaglavlje"
                     :class="{ artikli: content == 'artikli', narudzbe: content == 'narudzbe' }"
                 >
-                    {{ redak[zaglavlje.sqlName] || "-" }}
+                    <div v-if="!redak.edit">{{ redak[zaglavlje.sqlName] || "-" }}</div>
+                    <input v-else type="text" />
                 </td>
                 <td v-if="content == 'narudzbe'">
                     <div @click="detaljiNarudzbe(redak.idNarudzbe)" class="button-link back-blue">Detalji</div>
                 </td>
                 <td v-if="content != 'narudzbe'">
-                    <div class="button-link back-green">Ažuriraj</div>
+                    <div v-if="redak.edit" @click="spremiArtikal(redak)" class="button-link back-green">Spremi</div>
+                    <div v-else @click="redak.edit = true" class="button-link back-yellow">Ažuriraj</div>
                     <div class="button-link back-red">Obriši</div>
                 </td>
             </tr>
@@ -34,15 +28,18 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Narudzba } from "../types/Narudzba";
+import { Artikal } from "../types/Artikal";
+import TableHead from "../components/TableHead.vue";
 
 export default defineComponent({
+    components: { TableHead },
     props: {
         zaglavlja: {
-            type: String,
+            type: Array,
             required: true,
         },
         retci: {
-            type: Array as PropType<Narudzba[]>,
+            type: Array as PropType<Narudzba[] | Artikal[]>,
             required: true,
         },
         content: {
@@ -50,9 +47,15 @@ export default defineComponent({
             required: true,
         },
     },
+    data() {
+        return {};
+    },
     methods: {
         detaljiNarudzbe(idNarudzbe: number) {
             this.$router.push(`/narudzbe/${idNarudzbe}`);
+        },
+        async spremiArtikal(redak) {
+            //spremi artikal
         },
     },
 });
@@ -66,15 +69,6 @@ table {
     margin: auto;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-th {
-    font-weight: bold;
-    padding: 25px 10px;
-    text-align: left;
-    border-bottom: 2px solid #ddd;
-    position: sticky;
-    top: 9.9vh;
-    z-index: 1;
-}
 tr:nth-child(even) {
     background-color: #f9f9f9;
 }
@@ -86,9 +80,9 @@ td {
     border-bottom: 1px solid #ddd;
 }
 .artikli {
-    width: 10%;
+    width: 10.7%;
 }
 .narudzbe {
-    width: 17%;
+    width: 14%;
 }
 </style>
