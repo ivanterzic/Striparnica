@@ -1,26 +1,8 @@
-/*
-model zaposlenik {
-  mbr             String     @id @db.VarChar(15)
-  ime             String     @db.VarChar(30)
-  prezime         String     @db.VarChar(30)
-  email           String     @unique @db.VarChar(50)
-  oib             String     @unique @db.Char(11)
-  datumrodenja    DateTime   @db.Date
-  spol            String     @db.Char(1)
-  telefon         String     @db.VarChar(20)
-  lozinka         String     @db.VarChar(30)
-  datumzaposlenja DateTime   @db.Date
-  datumotpustanja DateTime?  @db.Date
-  iduloge         Int
-  narudzba        narudzba[]
-  racun           racun[]
-  uloga           uloga      @relation(fields: [iduloge], references: [iduloge], onDelete: NoAction, onUpdate: NoAction)
-}*/
-
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const zaposlenikClass =
+
     class Zaposlenik {
             mbr: string;
             ime: string;
@@ -50,46 +32,50 @@ const zaposlenikClass =
                 this.iduloge = iduloge;
             }
     
+            static async dohvatiSveZaposlenike() {
+                let zaposlenici = await prisma.zaposlenik.findMany();
+                return zaposlenici;
+            }
+
             static async dohvatiZaposlenika(mbr: string) {
-                prisma.zaposlenik.findUnique({
+                let zaposlenik = await prisma.zaposlenik.findUnique({
                     where: {
                         mbr: mbr
                     }
-                })
-                    .then((result) => {
-                        return result;
-                    })
-                    .catch((error) => {
-                        return error;
-                    });
+                });
+                return zaposlenik;
             }
     
             static async dohvatiZaposlenikaPoEmailu(email: string) {
-                prisma.zaposlenik.findUnique({
+                let zaposlenik = await prisma.zaposlenik.findUnique({
                     where: {
                         email: email
                     }
-                })
-                    .then((result) => {
-                        return result;
-                    })
-                    .catch((error) => {
-                        return error;
-                    });
+                });
+                return zaposlenik;
             }
     
             static async dohvatiZaposlenikaPoOibu(oib: string) {
-                prisma.zaposlenik.findUnique({
+                let zaposlenik = await prisma.zaposlenik.findUnique({
                     where: {
                         oib: oib
                     }
-                })
-                    .then((result) => {
-                        return result;
-                    })
-                    .catch((error) => {
-                        return error;
-                    });
+                });
+                return zaposlenik;
+            }
+
+            static async dohvatiSveReferenteNabave() {
+                let referentId = await prisma.uloga.findUnique({
+                    where: {
+                        naziv: 'referent nabave'
+                    }
+                });
+                let referenti = await prisma.zaposlenik.findMany({
+                    where: {
+                        iduloge: referentId?.iduloge
+                    }
+                });
+                return referenti;
             }
 
         }
