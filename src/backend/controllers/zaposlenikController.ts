@@ -1,29 +1,25 @@
-const Zaposlenik = require('../models/zaposlenik');
+import {Zaposlenik} from '../models/zaposlenik';
+import { Request, Response } from 'express';
 
-module.exports = class ZaposlenikController{
+export class ZaposlenikController {
 
-    apiDohvatiZaposlenika(req, res){
+    static async apiDohvatiZaposlenika(req: Request, res: Response){
         let mbr = req.params.mbr;
         let zaposlenik = Zaposlenik.dohvatiZaposlenika(mbr);
         res.json(zaposlenik);
     }
 
-    apiDohvatiZaposlenikaPoEmailu(req, res){
+    static async apiDohvatiZaposlenikaPoEmailu(req: Request, res: Response){
         let email = req.params.email;
         let zaposlenik = Zaposlenik.dohvatiZaposlenikaPoEmailu(email);
         res.json(zaposlenik);
     }
 
-    apiDohvatiZaposlenikaPoOibu(req, res){
+    static async apiDohvatiZaposlenikaPoOibu(req: Request, res: Response){
         let oib = req.params.oib;
         let zaposlenik = Zaposlenik.dohvatiZaposlenikaPoOibu(oib);
         res.json(zaposlenik);
     }
 
-    apiDodajZaposlenika(req, res){
-        let zaposlenik = new Zaposlenik(req.body.mbr, req.body.ime, req.body.prezime, req.body.email, req.body.oib, req.body.datumrodenja, req.body.spol, req.body.telefon, req.body.lozinka, req.body.datumzaposlenja, req.body.datumotpustanja, req.body.iduloge);
-        let result = Zaposlenik.dodajZaposlenika(zaposlenik);
-        res.json(result);
-    }
 }
 

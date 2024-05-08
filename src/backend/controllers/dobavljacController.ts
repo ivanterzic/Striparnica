@@ -1,33 +1,29 @@
-const Dobavljac = require('../models/dobavljac');
+import { parse } from 'path';
+import {Dobavljac} from '../models/dobavljac';
+import { Request, Response } from 'express';
 
-module.exports = class DobavljacController{
+export class DobavljacController{
 
-    static async apiDohvatiSveDobavljace(req, res){
+    static async apiDohvatiSveDobavljace(req: Request, res: Response){
         let dobavljaci = await Dobavljac.dohvatiSveDobavljace();
         res.json(dobavljaci);
     }
 
-    static async apiDohvatiDobavljaca(req, res){
+    static async apiDohvatiDobavljaca(req: Request, res: Response){
         let id = req.params.id;
-        let dobavljac = await Dobavljac.dohvatiDobavljaca(id);
+        let dobavljac = await Dobavljac.dohvatiDobavljaca(parseInt(id));
         res.json(dobavljac);
     }
 
-    static async apiDodajDobavljaca(req, res){
+    static async apiDodajDobavljaca(req: Request, res: Response){
         let dobavljac = new Dobavljac(req.body.iddobavljaca, req.body.ime, req.body.adresa, req.body.email, req.body.imevlasnika, req.body.prezimevlasnika);
         let result = await Dobavljac.dodajDobavljaca(dobavljac);
         res.json(result);
     }
 
-    static async apiAzurirajDobavljaca(req, res){
+    static async apiAzurirajDobavljaca(req: Request, res: Response){
         let dobavljac = new Dobavljac(req.body.iddobavljaca, req.body.ime, req.body.adresa, req.body.email, req.body.imevlasnika, req.body.prezimevlasnika);
         let result = await Dobavljac.azurirajDobavljaca(dobavljac);
-        res.json(result);
-    }
-
-    static async apiObrisiDobavljaca(req, res){
-        let id = req.params.id;
-        let result = await Dobavljac.obrisiDobavljaca(id);
         res.json(result);
     }
 

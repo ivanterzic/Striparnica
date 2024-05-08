@@ -38,3 +38,5 @@ const artikalClass =
                 });
         }
     }
+
+export { artikalClass as Artikal };

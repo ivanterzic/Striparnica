@@ -1,28 +1,23 @@
-const Narudzba = require('../models/narudzbaModel');
+import { Narudzba } from '../models/narudzba';
+import { Request, Response } from 'express';
 
-module.exports = class NarudzbaController{
+export class NarudzbaController{
 
-    static async apiDohvatiSveNarudzbe(req, res){
+    static async apiDohvatiSveNarudzbe(req : Request, res : Response){
         let narudzbe = await Narudzba.dohvatiSveNarudzbe();
         res.json(narudzbe);
     }
 
-    static async apiDohvatiNarudzbu(req, res){
+    static async apiDohvatiNarudzbu(req : Request, res : Response){
         let id = req.params.id;
-        let narudzba = await Narudzba.dohvatiNarudzbu(id);
+        let narudzba = await Narudzba.dohvatiNarudzbu(parseInt(id));
         res.json(narudzba);
     }
 
-    static async apiDohvatiArtikleNarudzbe(req, res){
+    static async apiDohvatiArtikleNarudzbe(req : Request, res : Response){
         let id = req.params.id;
-        let artikli = await Narudzba.dohvatiArtikleNarudzbe(id);
+        let artikli = await Narudzba.dohvatiArtikleNarudzbe(parseInt(id));
         res.json(artikli);
-    }
-
-    static async apiDodajNarudzbu(req, res){
-        let narudzba = new Narudzba(req.body.idnarudzbe, req.body.datumstvaranja, req.body.datumzaprimanja, req.body.status, req.body.iddobavljaca, req.body.mbrreferenta, req.body.artikli);
-        let result = await Narudzba.dodajNarudzbu(narudzba);
-        res.json(result);
     }
 
 }
