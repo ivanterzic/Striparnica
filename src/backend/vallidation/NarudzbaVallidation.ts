@@ -17,7 +17,6 @@ export async function narudzbaVallidation(req: Request, res: Response, next: Fun
     let iddobavljaca = parseInt(req.body.iddobavljaca);
     let datumstvaranja = new Date(req.body.datumstvaranja);
     let datumzaprimanja = new Date(req.body.datumzaprimanja);
-    //ako datum zaprimanja postoji i nije null, mora biti validan datum, datum stvaranja mora biti validan datum
     if (isNaN(datumstvaranja.getTime())) {
         res.status(400).json({ error: 'Datum stvaranja nije validan datum' });
         return;
