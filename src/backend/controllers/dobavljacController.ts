@@ -1,6 +1,7 @@
 const Dobavljac = require('../models/dobavljac');
 
 module.exports = class DobavljacController{
+
     static async apiDohvatiSveDobavljace(req, res){
         let dobavljaci = await Dobavljac.dohvatiSveDobavljace();
         res.json(dobavljaci);
