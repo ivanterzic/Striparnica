@@ -1,4 +1,3 @@
-//model za narudzbu
 import { PrismaClient, artikal } from '@prisma/client';
 const prisma = new PrismaClient();
 
