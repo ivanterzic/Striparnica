@@ -7,4 +7,5 @@ export type Artikal = {
     PDV: number;
     izdavac: string;
     izdanje: string;
+    edit: boolean;
 };

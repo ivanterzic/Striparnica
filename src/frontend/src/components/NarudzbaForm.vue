@@ -3,8 +3,8 @@
         <div v-for="(key, index) in Object.keys(narudzba)" :key="index" class="form-group">
             <label>{{ key }}</label>
             <input v-if="key == 'datumStvaranja' || key == 'datumZaprimanja'" type="date" v-model="narudzba[key]" />
-            <select v-else v-model="narudzba[key].trenutno">
-                <option v-for="mogucnost in narudzba[key].moguce" :key="mogucnost">
+            <select v-else v-model="narudzba[key]">
+                <option v-for="mogucnost in mogucnosti[key]" :key="mogucnost">
                     {{ mogucnost }}
                 </option>
             </select>
@@ -29,6 +29,10 @@ export default defineComponent({
             type: Number,
             required: true,
         },
+        mogucnosti: {
+            type: Object,
+            required: true,
+        },
     },
     methods: {
         updateNarudzba(): void {
@@ -45,7 +49,6 @@ export default defineComponent({
 .form {
     width: 40vw;
     height: 40vh;
-    background-color: yellow;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;

@@ -1,209 +1,61 @@
 <template>
     <div>
         <h2>Lista narudžbi</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th v-for="zaglavlje in zaglavlja" :key="zaglavlje" class="back-light-gray">{{ zaglavlje }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(narudzba, index) in narudzbe" :key="index">
-                    <td>{{ index }}</td>
-                    <td>{{ narudzba.datumStvaranja }}</td>
-                    <td>{{ narudzba.datumZaprimanja || "-" }}</td>
-                    <td>{{ narudzba.status }}</td>
-                    <td>{{ narudzba.idDobavljaca }}</td>
-                    <td>{{ narudzba.MBRReferenta }}</td>
-                    <td>
-                        <div @click="detaljiNarudzbe(narudzba.idNarudzbe)" class="button-link back-blue">Detalji</div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <Table :zaglavlja="zaglavlja" :retci="narudzbe" :content="'narudzbe'" />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Narudzba } from "../types/Narudzba";
+import Table from "../components/Table.vue";
 
 export default defineComponent({
+    components: { Table },
     data() {
         return {
             narudzbeURL: "http://localhost:3000/narudzbe",
             zaglavlja: [
-                "#",
-                "Datum Stvaranja",
-                "Datum Zaprimanja",
-                "Status",
-                "ID Dobavljača",
-                "MBR Referenta",
-                "",
-            ] as string[],
-            narudzbe: [
-                {
-                    idNarudzbe: 1,
-                    datumStvaranja: "2023-01-15",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 3,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 2,
-                    datumStvaranja: "2023-02-22",
-                    datumZaprimanja: "2023-03-05",
-                    status: "potvrdena",
-                    idDobavljaca: 2,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 3,
-                    datumStvaranja: "2023-03-08",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 4,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 1,
-                    datumStvaranja: "2023-01-15",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 3,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 2,
-                    datumStvaranja: "2023-02-22",
-                    datumZaprimanja: "2023-03-05",
-                    status: "potvrdena",
-                    idDobavljaca: 2,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 3,
-                    datumStvaranja: "2023-03-08",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 4,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 1,
-                    datumStvaranja: "2023-01-15",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 3,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 2,
-                    datumStvaranja: "2023-02-22",
-                    datumZaprimanja: "2023-03-05",
-                    status: "potvrdena",
-                    idDobavljaca: 2,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 3,
-                    datumStvaranja: "2023-03-08",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 4,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 1,
-                    datumStvaranja: "2023-01-15",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 3,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 2,
-                    datumStvaranja: "2023-02-22",
-                    datumZaprimanja: "2023-03-05",
-                    status: "potvrdena",
-                    idDobavljaca: 2,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 3,
-                    datumStvaranja: "2023-03-08",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 4,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 2,
-                    datumStvaranja: "2023-02-22",
-                    datumZaprimanja: "2023-03-05",
-                    status: "potvrdena",
-                    idDobavljaca: 2,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 3,
-                    datumStvaranja: "2023-03-08",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 4,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 2,
-                    datumStvaranja: "2023-02-22",
-                    datumZaprimanja: "2023-03-05",
-                    status: "potvrdena",
-                    idDobavljaca: 2,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 3,
-                    datumStvaranja: "2023-03-08",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 4,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 1,
-                    datumStvaranja: "2023-01-15",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 3,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 2,
-                    datumStvaranja: "2023-02-22",
-                    datumZaprimanja: "2023-03-05",
-                    status: "potvrdena",
-                    idDobavljaca: 2,
-                    MBRReferenta: "1006474746334",
-                },
-                {
-                    idNarudzbe: 3,
-                    datumStvaranja: "2023-03-08",
-                    datumZaprimanja: null,
-                    status: "u tijeku",
-                    idDobavljaca: 4,
-                    MBRReferenta: "1006474746334",
-                },
-            ] as Narudzba[],
+                { displayName: "ID narudžbe", sqlName: "idNarudzbe" },
+                { displayName: "Datum Stvaranja", sqlName: "datumStvaranja" },
+                { displayName: "Datum Zaprimanja", sqlName: "datumZaprimanja" },
+                { displayName: "Status", sqlName: "status" },
+                { displayName: "ID Dobavljača", sqlName: "idDobavljaca" },
+                { displayName: "MBR Referenta", sqlName: "MBRReferenta" },
+            ],
+            narudzbe: [] as Narudzba[],
         };
     },
     mounted() {
+        for (let i = 0; i < 25; i++) {
+            this.narudzbe.push({
+                idNarudzbe: 3,
+                datumStvaranja: "2023-03-08",
+                datumZaprimanja: null,
+                status: "u tijeku",
+                idDobavljaca: 4,
+                MBRReferenta: "1006474746334",
+                edit: false,
+            });
+        }
         //this.dohvatiNarudzbe()
     },
     methods: {
-        detaljiNarudzbe(idNarudzbe: number) {
-            console.log("id narudzbe: " + idNarudzbe);
-            this.$router.push(`/narudzbe/${idNarudzbe}`);
+        async dohvatiNarudzbe() {
+            try {
+                let response = await fetch(this.narudzbeURL, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error("Server problem");
+                }
+                this.narudzbe = await response.json();
+            } catch (error) {
+                console.log(error);
+            }
         },
     },
 });
@@ -213,31 +65,5 @@ export default defineComponent({
 h2 {
     width: 95%;
     margin: 25px auto;
-}
-table {
-    width: 95%;
-    border-collapse: collapse;
-    border-spacing: 0;
-    margin: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-th {
-    font-weight: bold;
-    padding: 25px 10px;
-    text-align: left;
-    border-bottom: 2px solid #ddd;
-    position: sticky;
-    top: 9.9vh;
-    z-index: 1;
-}
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-tr:nth-child(odd) {
-    background-color: #e9e9e9;
-}
-td {
-    padding: 8px 10px;
-    border-bottom: 1px solid #ddd;
 }
 </style>

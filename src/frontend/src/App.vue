@@ -26,11 +26,9 @@ nav {
 nav a {
     border-radius: 3px;
     transition: background-color 0.3s ease;
-    border: 2px solid black;
 }
 nav div {
     display: inline-block;
-    border: 2px solid red;
     font-weight: 700;
 }
 nav a:hover {
@@ -49,6 +47,7 @@ nav a:hover {
     display: inline-block;
     padding: 10px;
     border-radius: 3px;
+    margin-right: 10px
 }
 .button-link:hover {
     cursor: pointer;
