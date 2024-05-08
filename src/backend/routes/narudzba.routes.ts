@@ -5,25 +5,24 @@ import { narudzbaVallidation } from '../vallidation/NarudzbaVallidation';
 
 const router = Router();
 
-router.get('/stranikljucevi', NarudzbaController.apiDohvatSvihStranihKljuceva); //testirano
-router.get('/statusi', NarudzbaController.apiDohvatiSveStatuseNarudzbi); //testirano
+router.get('/stranikljucevi', NarudzbaController.apiDohvatSvihStranihKljuceva); 
+router.get('/statusi', NarudzbaController.apiDohvatiSveStatuseNarudzbi); 
 
-router.get('/sljedeca/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimVecimID); //testirano
-router.get('/prethodna/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimManjimID); //testirano
+router.get('/sljedeca/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimVecimID); 
+router.get('/prethodna/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimManjimID); 
 
-router.get('/:id', NarudzbaController.apiDohvatiNarudzbu); //testirano
-router.get('/', NarudzbaController.apiDohvatiSveNarudzbe); //testirano
+router.get('/:id', NarudzbaController.apiDohvatiNarudzbu); 
+router.get('/', NarudzbaController.apiDohvatiSveNarudzbe); 
 
-router.post('/:id/urediartikle', NarudzbaController.apiUrediArtikleNarudzbe); //testirano
-router.post('/', narudzbaVallidation, NarudzbaController.apiKreirajNarudzbu); //testirano
+router.post('/:id/urediartikle', NarudzbaController.apiUrediArtikleNarudzbe); 
+router.post('/', narudzbaVallidation, NarudzbaController.apiKreirajNarudzbu); 
 
-router.put('/:id', narudzbaVallidation, NarudzbaController.apiAzurirajNarudzbu); //testirano
+router.put('/:id', narudzbaVallidation, NarudzbaController.apiAzurirajNarudzbu); 
 
-router.delete('/:id', NarudzbaController.apiObrisiNarudzbu); //testirano
+router.delete('/:id', NarudzbaController.apiObrisiNarudzbu); 
 
 router.all('/', function (req, res) {
     res.send('Method not allowed');
 });
-
 
 export default router;

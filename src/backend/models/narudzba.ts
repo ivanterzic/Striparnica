@@ -72,7 +72,6 @@ const narudzbaClass =
             }
 
            static async kreirajNarudzbu(narudzba: Narudzba) {
-                console.log(narudzba);
                 let result = await prisma.narudzba.create({
                     data: {
                         datumstvaranja: narudzba.datumstvaranja,
@@ -86,7 +85,6 @@ const narudzbaClass =
             }
 
             static async azurirajNarudzbu(id: number, narudzba: Narudzba) {
-                console.log(narudzba);
                 let result = await prisma.narudzba.update({
                     where: {
                         idnarudzbe: id
