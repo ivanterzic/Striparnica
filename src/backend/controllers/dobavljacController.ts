@@ -1,30 +1,38 @@
-import { parse } from 'path';
+import { dobavljac } from '@prisma/client';
 import {Dobavljac} from '../models/dobavljac';
 import { Request, Response } from 'express';
 
 export class DobavljacController{
 
     static async apiDohvatiSveDobavljace(req: Request, res: Response){
-        let dobavljaci = await Dobavljac.dohvatiSveDobavljace();
-        res.json(dobavljaci);
+        try {
+            let dobavljaci = await Dobavljac.dohvatiSveDobavljace();
+            res.json(dobavljaci);
+        }
+        catch (err) {
+            res.status(500).json({error: err});
+        }
     }
 
     static async apiDohvatiDobavljaca(req: Request, res: Response){
-        let id = req.params.id;
-        let dobavljac = await Dobavljac.dohvatiDobavljaca(parseInt(id));
-        res.json(dobavljac);
+        try {
+            let id = parseInt(req.params.id);
+            let dobavljac = await Dobavljac.dohvatiDobavljaca(id);
+            res.json(dobavljac);
+        }
+        catch (err) {
+            res.status(500).json({error: err});
+        }
     }
 
-    static async apiDodajDobavljaca(req: Request, res: Response){
-        let dobavljac = new Dobavljac(req.body.iddobavljaca, req.body.ime, req.body.adresa, req.body.email, req.body.imevlasnika, req.body.prezimevlasnika);
-        let result = await Dobavljac.dodajDobavljaca(dobavljac);
-        res.json(result);
-    }
-
-    static async apiAzurirajDobavljaca(req: Request, res: Response){
-        let dobavljac = new Dobavljac(req.body.iddobavljaca, req.body.ime, req.body.adresa, req.body.email, req.body.imevlasnika, req.body.prezimevlasnika);
-        let result = await Dobavljac.azurirajDobavljaca(dobavljac);
-        res.json(result);
+    static async apiDohvatiSveId(req: Request, res: Response){
+        try {    
+            let idovi = await Dobavljac.dohvatiSveDobavljace();
+            res.json(idovi.map((dobavljac: dobavljac) => dobavljac.iddobavljaca));
+        }
+        catch (err) {
+            res.status(500).json({error: err});
+        }
     }
 
 }
