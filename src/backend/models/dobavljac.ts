@@ -22,67 +22,17 @@ const dobavljacClass =
         }
 
         static async dohvatiSveDobavljace() {
-            prisma.dobavljac.findMany()
-            .then((result) => {
-                return result;
-            })
-            .catch((error) => {
-                return error;
-            });
+            let result = await prisma.dobavljac.findMany();
+            return result;
         }   
 
         static async dohvatiDobavljaca(id: number) {
-            prisma.dobavljac.findUnique({
+            let result = await prisma.dobavljac.findUnique({
                 where: {
                     iddobavljaca: id
                 }
-            })
-            .then((result) => {
-                return result;
-            })
-            .catch((error) => {
-                return error;
             });
-        }
-
-        static async dodajDobavljaca(dobavljac: Dobavljac) {
-            prisma.dobavljac.create({
-                data: {
-                    iddobavljaca: dobavljac.iddobavljaca,
-                    ime: dobavljac.ime,
-                    adresa: dobavljac.adresa,
-                    email: dobavljac.email,
-                    imevlasnika: dobavljac.imevlasnika,
-                    prezimevlasnika: dobavljac.prezimevlasnika
-                }
-            })
-            .then((result) => {
-                return result;
-            })
-            .catch((error) => {
-                return error;
-            });
-        }
-
-        static async azurirajDobavljaca(dobavljac: Dobavljac) {
-            prisma.dobavljac.update({
-                where: {
-                    iddobavljaca: dobavljac.iddobavljaca
-                },
-                data: {
-                    ime: dobavljac.ime,
-                    adresa: dobavljac.adresa,
-                    email: dobavljac.email,
-                    imevlasnika: dobavljac.imevlasnika,
-                    prezimevlasnika: dobavljac.prezimevlasnika
-                }
-            })
-            .then((result) => {
-                return result;
-            })
-            .catch((error) => {
-                return error;
-            });
+            return result;
         }
 
     };

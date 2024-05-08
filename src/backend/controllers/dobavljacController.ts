@@ -1,33 +1,38 @@
-const Dobavljac = require('../models/dobavljac');
+import { dobavljac } from '@prisma/client';
+import {Dobavljac} from '../models/dobavljac';
+import { Request, Response } from 'express';
 
-module.exports = class DobavljacController{
-    static async apiDohvatiSveDobavljace(req, res){
-        let dobavljaci = await Dobavljac.dohvatiSveDobavljace();
-        res.json(dobavljaci);
+export class DobavljacController{
+
+    static async apiDohvatiSveDobavljace(req: Request, res: Response){
+        try {
+            let dobavljaci = await Dobavljac.dohvatiSveDobavljace();
+            res.json(dobavljaci);
+        }
+        catch (err) {
+            res.status(500).json({error: err});
+        }
     }
 
-    static async apiDohvatiDobavljaca(req, res){
-        let id = req.params.id;
-        let dobavljac = await Dobavljac.dohvatiDobavljaca(id);
-        res.json(dobavljac);
+    static async apiDohvatiDobavljaca(req: Request, res: Response){
+        try {
+            let id = parseInt(req.params.id);
+            let dobavljac = await Dobavljac.dohvatiDobavljaca(id);
+            res.json(dobavljac);
+        }
+        catch (err) {
+            res.status(500).json({error: err});
+        }
     }
 
-    static async apiDodajDobavljaca(req, res){
-        let dobavljac = new Dobavljac(req.body.iddobavljaca, req.body.ime, req.body.adresa, req.body.email, req.body.imevlasnika, req.body.prezimevlasnika);
-        let result = await Dobavljac.dodajDobavljaca(dobavljac);
-        res.json(result);
-    }
-
-    static async apiAzurirajDobavljaca(req, res){
-        let dobavljac = new Dobavljac(req.body.iddobavljaca, req.body.ime, req.body.adresa, req.body.email, req.body.imevlasnika, req.body.prezimevlasnika);
-        let result = await Dobavljac.azurirajDobavljaca(dobavljac);
-        res.json(result);
-    }
-
-    static async apiObrisiDobavljaca(req, res){
-        let id = req.params.id;
-        let result = await Dobavljac.obrisiDobavljaca(id);
-        res.json(result);
+    static async apiDohvatiSveId(req: Request, res: Response){
+        try {    
+            let idovi = await Dobavljac.dohvatiSveDobavljace();
+            res.json(idovi.map((dobavljac: dobavljac) => dobavljac.iddobavljaca));
+        }
+        catch (err) {
+            res.status(500).json({error: err});
+        }
     }
 
 }
