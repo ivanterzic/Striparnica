@@ -1,9 +1,8 @@
 export type Narudzba = {
-    idNarudzbe: number;
-    datumStvaranja: string;
-    datumZaprimanja: string | null;
+    idnarudzbe: number;
+    datumstvaranja: string;
+    datumzaprimanja: string | null;
     status: string;
-    idDobavljaca: number;
-    MBRReferenta: string;
-    edit: boolean;
+    iddobavljaca: number;
+    mbrreferenta: string;
 };

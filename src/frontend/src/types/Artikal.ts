@@ -1,11 +1,12 @@
 export type Artikal = {
-    idArtikla: number;
+    idartikla: number;
     naziv: string;
     opis: string;
-    dostupnaKolicina: number;
+    dostupnakolicina: number;
     cijena: number;
-    PDV: number;
+    pdv: number;
     izdavac: string;
     izdanje: string;
+    kolicina: number;
     edit: boolean;
 };
