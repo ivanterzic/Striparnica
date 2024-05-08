@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-const statusiNarudzbe = ["potvrdena", "u tijeku"];
+const statusiNarudzbe = ["potvrdena", "u tijeku", "neispravna"];
 
 const narudzbaClass =
 
@@ -51,7 +51,6 @@ const narudzbaClass =
                 return statusiNarudzbe;
             }
 
-            
             static async dohvatiPrviVeciID(id: number) {
                 let result = await prisma.narudzba.findFirst({
                     where: {
@@ -74,7 +73,18 @@ const narudzbaClass =
                 return result?.idnarudzbe;
             }
 
-           
+           static async kreirajNarudzbu(narudzba: Narudzba) {
+                let result = await prisma.narudzba.create({
+                    data: {
+                        datumstvaranja: narudzba.datumstvaranja,
+                        datumzaprimanja: narudzba.datumzaprimanja,
+                        status: narudzba.status,
+                        iddobavljaca: narudzba.iddobavljaca,
+                        mbrreferenta: narudzba.mbrreferenta
+                    }
+                });
+                return result;
+            }
     };
 
 export { narudzbaClass as Narudzba };
