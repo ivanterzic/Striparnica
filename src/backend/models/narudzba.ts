@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const narudzbaClass =
+
         class Narudzba {
                         
             idnarudzbe: number;
@@ -23,50 +24,20 @@ const narudzbaClass =
             }
     
             static async dohvatiSveNarudzbe() {
-                //return all narudzba and all artikli connected to narudzba
-                prisma.narudzba.findMany({
-                    include: {
-                        narudzbaartikli: true,
-                    }
-                })
-                .then((result) => {
-                    return result;
-                })
-                .catch((error) => {
-                    return error;
-                });
+                let result = await prisma.narudzba.findMany();
+                return result;
             }   
     
             static async dohvatiNarudzbu(id: number) {
-                prisma.narudzba.findUnique({
+                let result = await prisma.narudzba.findUnique({
                     where: {
                         idnarudzbe: id
                     }
-                })
-                .then((result) => {
-                    return result;
-                })
-                .catch((error) => {
-                    return error;
                 });
+                return result;
             }
 
-            static async dohvatiArtikleNarudzbe(id: number) {
-                prisma.narudzbaartikli.findMany({
-                    where: {
-                        idnarudzbe: id
-                    },
-                    include: {
-                        artikal: true
-                    }
-                })
-                .then((result) => {
-                    return result;
-                })
-                .catch((error) => {
-                    return error;
-                });
-            }
+           
     };
 
 export { narudzbaClass as Narudzba };
