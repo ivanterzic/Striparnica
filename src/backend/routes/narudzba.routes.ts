@@ -14,9 +14,8 @@ router.get('/previous/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimManjimID)
 router.get('/:id', NarudzbaController.apiDohvatiNarudzbu); //testirano
 router.get('/', NarudzbaController.apiDohvatiSveNarudzbe); //testirano
 
-router.post('/urediartikle/:id', NarudzbaController.apiUrediArtikleNarudzbe); //testirano
+router.post('/:id/urediartikle', NarudzbaController.apiUrediArtikleNarudzbe); //testirano
 router.post('/', narudzbaVallidation, NarudzbaController.apiKreirajNarudzbu); //testirano
-
 
 router.put('/:id', narudzbaVallidation, NarudzbaController.apiAzurirajNarudzbu); //testirano
 

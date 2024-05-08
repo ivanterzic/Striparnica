@@ -17,10 +17,10 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.use('/dobavljac', dobavljacRoutes);
-app.use('/narudzba', narudzbaRoutes);
-app.use('/artikal', artikalRoutes);
-app.use('/zaposlenik', zaposlenikRoutes);
+app.use('/dobavljaci', dobavljacRoutes);
+app.use('/narudzbe', narudzbaRoutes);
+app.use('/artikli', artikalRoutes);
+app.use('/zaposlenici', zaposlenikRoutes);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
