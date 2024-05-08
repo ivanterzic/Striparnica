@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
+const statusiNarudzbe = ["potvrdena", "u tijeku"];
+
 const narudzbaClass =
 
         class Narudzba {
@@ -34,7 +36,42 @@ const narudzbaClass =
                         idnarudzbe: id
                     }
                 });
-                return result;
+                let artikli = await prisma.narudzbaartikli.findMany({
+                    where: {
+                        idnarudzbe: id
+                    }
+                });
+                return {
+                    narudzba : result,
+                    artikli : artikli
+                }
+            }
+
+            static async dohvatiSveStatuseNarudzbi() {
+                return statusiNarudzbe;
+            }
+
+            
+            static async dohvatiPrviVeciID(id: number) {
+                let result = await prisma.narudzba.findFirst({
+                    where: {
+                        idnarudzbe: {
+                            gt: id
+                        }
+                    }
+                });
+                return result?.idnarudzbe;
+            }
+
+            static async dohvatiPrviManjiID(id: number) {
+                let result = await prisma.narudzba.findFirst({
+                    where: {
+                        idnarudzbe: {
+                            lt: id
+                        }
+                    }
+                });
+                return result?.idnarudzbe;
             }
 
            
