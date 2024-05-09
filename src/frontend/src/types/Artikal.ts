@@ -10,3 +10,8 @@ export type Artikal = {
     kolicina: number;
     edit: boolean;
 };
+
+export type ArtikalOsnovno = {
+    idartikla: number;
+    kolicina: number;
+};

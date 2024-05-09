@@ -66,6 +66,7 @@ export default defineComponent({
     methods: {
         async azurirajNarudzbu(): Promise<void> {
             try {
+                // console.log(this.narudzbaMutable);
                 let response = await fetch(this.narudzbaURL, {
                     method: "PUT",
                     headers: {
