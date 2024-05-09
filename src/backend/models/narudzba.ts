@@ -86,6 +86,9 @@ const narudzbaClass =
                         idnarudzbe: {
                             gt: id
                         }
+                    },
+                    orderBy: {
+                        idnarudzbe: 'asc'
                     }
                 });
                 return result?.idnarudzbe;
@@ -97,6 +100,9 @@ const narudzbaClass =
                         idnarudzbe: {
                             lt: id
                         }
+                    },
+                    orderBy: {
+                        idnarudzbe: 'desc'
                     }
                 });
                 return result?.idnarudzbe;
@@ -146,12 +152,12 @@ const narudzbaClass =
             }
 
             static async obrisiNarudzbu(id: number) {
-                let result = await prisma.narudzba.delete({
+                let result2 = await prisma.narudzbaartikli.deleteMany({
                     where: {
                         idnarudzbe: id
                     }
                 });
-                let result2 = await prisma.narudzbaartikli.deleteMany({
+                let result = await prisma.narudzba.delete({
                     where: {
                         idnarudzbe: id
                     }
