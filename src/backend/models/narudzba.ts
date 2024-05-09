@@ -28,14 +28,12 @@ const narudzbaClass =
                 let result2 = [];
                 for (let r of result) {
                     result2.push({
-                        narudzba: {
-                            idnarudzbe: r.idnarudzbe,
-                            datumstvaranja: r.datumstvaranja ? r.datumstvaranja.toJSON().split('T')[0] : null,
-                            datumzaprimanja: r.datumzaprimanja ? r.datumzaprimanja.toJSON().split('T')[0] : null,
-                            status: r.status,
-                            iddobavljaca: r.iddobavljaca,
-                            mbrreferenta: r.mbrreferenta
-                        }
+                        idnarudzbe: r.idnarudzbe,
+                        datumstvaranja: r.datumstvaranja ? r.datumstvaranja.toJSON().split('T')[0] : null,
+                        datumzaprimanja: r.datumzaprimanja ? r.datumzaprimanja.toJSON().split('T')[0] : null,
+                        status: r.status,
+                        iddobavljaca: r.iddobavljaca,
+                        mbrreferenta: r.mbrreferenta
                     });
                 }
                 return result2;
@@ -52,6 +50,18 @@ const narudzbaClass =
                         idnarudzbe: id
                     }
                 });
+                let artikliProsireno = [];
+                for (let a of artikli) {
+                    let art = await prisma.artikal.findUnique({
+                        where: {
+                            idartikla: a.idartikla
+                        }
+                    });
+                    artikliProsireno.push({
+                        ...art,
+                        kolicina: a.kolicina
+                    });
+                }
                 return {
                     narudzba : {
                         idnarudzbe: result?.idnarudzbe,
@@ -62,7 +72,7 @@ const narudzbaClass =
                         mbrreferenta: result?.mbrreferenta
                     
                     },
-                    artikli : artikli
+                    artikli : artikliProsireno
                 }
             }
 

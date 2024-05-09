@@ -22,20 +22,7 @@ export class NarudzbaController{
         try {
             let id = parseInt(req.params.id);
             let result = await Narudzba.dohvatiNarudzbu(id);
-            let narudzba = result.narudzba;
-            let updatedArtikli: Array<artikal & { kolicina: number }> = [];
-            for (let artikal of result.artikli) {
-                let a = await Artikal.dohvatiArtikal(artikal.idartikla);
-                updatedArtikli.push({
-                    ...a,
-                    kolicina: artikal.kolicina
-                } as artikal & { kolicina: number });
-            }
-            res.json({
-                narudzba: narudzba,
-                artikli: updatedArtikli
-            });
-                
+            res.json(result);
         }
         catch (err) {
             res.status(500).json({ error: err });
