@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Dobavljac } from '../models/dobavljac';
 import { Zaposlenik } from '../models/zaposlenik';
 import { Narudzba } from '../models/narudzba';
-import { isDate } from 'util/types';
 
 
 export async function narudzbaVallidation(req: Request, res: Response, next: Function) {
@@ -31,7 +30,10 @@ export async function narudzbaVallidation(req: Request, res: Response, next: Fun
         res.status(400).json({ error: 'Datum zaprimanja mora biti nakon datuma stvaranja' });
         return;
     }
-
+    if (req.body.datumzaprimanja){
+        req.body.datumzaprimanja += "T00:00:00.000Z";
+    }
+    req.body.datumstvaranja += "T00:00:00.000Z";
     if (!referenti.includes(req.body.mbrreferenta)) {
         res.status(400).json({ error: 'Mbr referenta nije medju referentima nabave' });
         return;

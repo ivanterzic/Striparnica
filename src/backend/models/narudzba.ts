@@ -25,7 +25,20 @@ const narudzbaClass =
     
             static async dohvatiSveNarudzbe() {
                 let result = await prisma.narudzba.findMany();
-                return result;
+                let result2 = [];
+                for (let r of result) {
+                    result2.push({
+                        narudzba: {
+                            idnarudzbe: r.idnarudzbe,
+                            datumstvaranja: r.datumstvaranja ? r.datumstvaranja.toJSON().split('T')[0] : null,
+                            datumzaprimanja: r.datumzaprimanja ? r.datumzaprimanja.toJSON().split('T')[0] : null,
+                            status: r.status,
+                            iddobavljaca: r.iddobavljaca,
+                            mbrreferenta: r.mbrreferenta
+                        }
+                    });
+                }
+                return result2;
             }   
     
             static async dohvatiNarudzbu(id: number) {
@@ -40,7 +53,15 @@ const narudzbaClass =
                     }
                 });
                 return {
-                    narudzba : result,
+                    narudzba : {
+                        idnarudzbe: result?.idnarudzbe,
+                        datumstvaranja: result?.datumstvaranja ? result?.datumstvaranja.toJSON().split('T')[0] : null,
+                        datumzaprimanja: result?.datumzaprimanja ? result?.datumzaprimanja.toJSON().split('T')[0] : null,
+                        status: result?.status,
+                        iddobavljaca: result?.iddobavljaca,
+                        mbrreferenta: result?.mbrreferenta
+                    
+                    },
                     artikli : artikli
                 }
             }
@@ -75,13 +96,20 @@ const narudzbaClass =
                 let result = await prisma.narudzba.create({
                     data: {
                         datumstvaranja: narudzba.datumstvaranja,
-                        datumzaprimanja: narudzba.datumzaprimanja,
+                        datumzaprimanja: narudzba.datumzaprimanja? narudzba.datumzaprimanja : null,
                         status: narudzba.status,
                         iddobavljaca: narudzba.iddobavljaca,
                         mbrreferenta: narudzba.mbrreferenta
                     }
                 });
-                return result;
+                return {
+                    idnarudzbe: result.idnarudzbe,
+                    datumstvaranja: result.datumstvaranja ? result.datumstvaranja.toJSON().split('T')[0] : null,
+                    datumzaprimanja: result.datumzaprimanja ? result.datumzaprimanja.toJSON().split('T')[0] : null,
+                    status: result.status,
+                    iddobavljaca: result.iddobavljaca,
+                    mbrreferenta: result.mbrreferenta
+                }
             }
 
             static async azurirajNarudzbu(id: number, narudzba: Narudzba) {
@@ -97,7 +125,14 @@ const narudzbaClass =
                         mbrreferenta: narudzba.mbrreferenta
                     }
                 });
-                return result;
+                return {
+                    idnarudzbe: result.idnarudzbe,
+                    datumstvaranja: result.datumstvaranja ? result.datumstvaranja.toJSON().split('T')[0] : null,
+                    datumzaprimanja: result.datumzaprimanja ? result.datumzaprimanja.toJSON().split('T')[0] : null,
+                    status: result.status,
+                    iddobavljaca: result.iddobavljaca,
+                    mbrreferenta: result.mbrreferenta
+                };
             }
 
             static async obrisiNarudzbu(id: number) {
