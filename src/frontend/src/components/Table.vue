@@ -16,9 +16,9 @@
                     <div @click="detaljiNarudzbe(redak.idnarudzbe)" class="button-link back-blue">Detalji</div>
                 </td>
                 <td v-if="content != 'narudzbe'">
-                    <div v-if="redak.edit" @click="azurirajArtikle(redak)" class="button-link back-green">Spremi</div>
+                    <div v-if="redak.edit" @click="azurirajArtikal(redak)" class="button-link back-green">Spremi</div>
                     <div v-else @click="redak.edit = true" class="button-link back-yellow">Ažuriraj</div>
-                    <div class="button-link back-red">Obriši</div>
+                    <div class="button-link back-red" @click="obrisiArtikal(redak)">Obriši</div>
                 </td>
             </tr>
         </tbody>
@@ -28,7 +28,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Narudzba } from "../types/Narudzba";
-import { Artikal } from "../types/Artikal";
+import { Artikal, ArtikalOsnovno } from "../types/Artikal";
 import { Zaglavlje } from "../types/Zaglavlje";
 import TableHead from "../components/TableHead.vue";
 
@@ -69,24 +69,50 @@ export default defineComponent({
         kolicinaEdit(redak: Artikal, zaglavlje: any): boolean {
             return zaglavlje.sqlName === "kolicina" && redak.edit == true;
         },
-        async azurirajArtikle(redak: Artikal) {
-            redak.edit = false;
-            // console.log(this.retci);
+        azurirajArtikal(): void {
+            let data: ArtikalOsnovno[] = [];
+            this.retci.forEach((redak: any) => {
+                if (redak.kolicina != 0) {
+                    data.push({
+                        idartikla: redak.idartikla,
+                        kolicina: redak.kolicina,
+                    });
+                }
+            });
+            this.posaljiArtikle(data);
+        },
+        obrisiArtikal(artikal: Artikal): void {
+            let data: ArtikalOsnovno[] = [];
+            this.retci.forEach((redak: any) => {
+                if (redak.idartikla != artikal.idartikla) {
+                    data.push({
+                        idartikla: redak.idartikla,
+                        kolicina: redak.kolicina,
+                    });
+                }
+            });
+            this.posaljiArtikle(data);
+        },
+        async posaljiArtikle(data: ArtikalOsnovno[]): Promise<void> {
             console.log(this.artikliURL);
-            // try {
-            //     let response = await fetch(this.artikliURL, {
-            //         method: "PUT",
-            //         headers: {
-            //             "Content-Type": "application/json",
-            //         },
-            //     });
-            //     if (!response.ok) {
-            //         throw new Error("Server problem");
-            //     }
-            //     redak.edit = false;
-            // } catch (error) {
-            //     console.log(error);
-            // }
+            console.log(data);
+            try {
+                let response = await fetch(this.artikliURL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        stavkenarudzbe: data,
+                    }),
+                });
+                if (!response.ok) {
+                    throw new Error("Server problem");
+                }
+                this.$emit("refresh");
+            } catch (error) {
+                console.log(error);
+            }
         },
     },
 });

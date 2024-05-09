@@ -10,6 +10,7 @@
             :retci="artikli"
             :content="'artikli'"
             :id="narudzba.idnarudzbe"
+            @refresh="dohvatiNarudzbu"
         />
     </div>
 </template>
@@ -44,7 +45,7 @@ export default defineComponent({
                 { displayName: "PDV", sqlName: "pdv" },
                 { displayName: "Izdavač", sqlName: "izdavac" },
                 { displayName: "Izdanje", sqlName: "izdanje" },
-                { displayName: "Dostupna količina", sqlName: "dostupnakolicina" },
+                { displayName: "Količina (skladište)", sqlName: "dostupnakolicina" },
                 { displayName: "Tražena količina", sqlName: "kolicina" },
             ],
         };

@@ -5,4 +5,5 @@ export type Narudzba = {
     status: string;
     iddobavljaca: number;
     mbrreferenta: string;
+    [key: string]: any;
 };
