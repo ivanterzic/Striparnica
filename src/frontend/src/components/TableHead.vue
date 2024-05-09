@@ -1,7 +1,7 @@
 <template>
     <thead>
         <tr>
-            <th v-if="content == 'narudzbe'" class="back-light-gray">#</th>
+            <th v-if="content == 'artikli'" class="back-light-gray rbr">#</th>
             <th v-for="zaglavlje in zaglavlja" :key="zaglavlje" class="back-light-gray">
                 {{ zaglavlje.displayName }}
             </th>
@@ -36,5 +36,8 @@ th {
     position: sticky;
     top: 9.9vh;
     z-index: 1;
+}
+.rbr{
+    width: 20px
 }
 </style>

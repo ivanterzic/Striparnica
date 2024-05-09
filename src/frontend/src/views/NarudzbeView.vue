@@ -33,12 +33,7 @@ export default defineComponent({
     methods: {
         async dohvatiNarudzbe(): Promise<void> {
             try {
-                let response = await fetch(this.narudzbeURL, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
+                let response = await fetch(this.narudzbeURL);
                 if (!response.ok) {
                     throw new Error("Greška kod dohvaćanja narudžbi s poslužitelja");
                 }

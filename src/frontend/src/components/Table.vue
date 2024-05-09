@@ -3,20 +3,20 @@
         <TableHead :zaglavlja="zaglavlja" :content="content" />
         <tbody>
             <tr v-for="(redak, index) in retci" :key="index">
-                <td v-if="content == 'narudzbe'" :class="{ 'artikli-padding': content != 'narudzbe' }">{{ index }}</td>
+                <td v-if="content == 'artikli'">{{ index }}</td>
                 <td
                     v-for="zaglavlje in zaglavlja"
                     :key="zaglavlje"
                     :class="{ artikli: content == 'artikli', narudzbe: content == 'narudzbe' }"
                 >
-                    <div v-if="!redak.edit">{{ redak[zaglavlje.sqlName] || "-" }}</div>
-                    <input v-else type="text" />
+                    <div v-if="!kolicinaEdit(redak, zaglavlje)">{{ redak[zaglavlje.sqlName] || "-" }}</div>
+                    <input v-else type="number" v-model="redak.kolicina" />
                 </td>
                 <td v-if="content == 'narudzbe'">
-                    <div @click="detaljiNarudzbe(redak.idNarudzbe)" class="button-link back-blue">Detalji</div>
+                    <div @click="detaljiNarudzbe(redak.idnarudzbe)" class="button-link back-blue">Detalji</div>
                 </td>
                 <td v-if="content != 'narudzbe'">
-                    <div v-if="redak.edit" @click="spremiArtikal(redak)" class="button-link back-green">Spremi</div>
+                    <div v-if="redak.edit" @click="azurirajArtikle(redak)" class="button-link back-green">Spremi</div>
                     <div v-else @click="redak.edit = true" class="button-link back-yellow">Ažuriraj</div>
                     <div class="button-link back-red">Obriši</div>
                 </td>
@@ -29,13 +29,14 @@
 import { defineComponent, PropType } from "vue";
 import { Narudzba } from "../types/Narudzba";
 import { Artikal } from "../types/Artikal";
+import { Zaglavlje } from "../types/Zaglavlje";
 import TableHead from "../components/TableHead.vue";
 
 export default defineComponent({
     components: { TableHead },
     props: {
         zaglavlja: {
-            type: Array,
+            type: Array as PropType<Zaglavlje[]>,
             required: true,
         },
         retci: {
@@ -46,16 +47,46 @@ export default defineComponent({
             type: String,
             required: true,
         },
+        id: {
+            type: Number,
+            required: false,
+        },
     },
     data() {
-        return {};
+        return {
+            narudzbaURL: "http://localhost:3000/narudzbe/",
+        };
+    },
+    computed: {
+        artikliURL(): string {
+            return this.narudzbaURL + this.id + "/urediartikle";
+        },
     },
     methods: {
-        detaljiNarudzbe(idNarudzbe: number) {
+        detaljiNarudzbe(idNarudzbe: number): void {
             this.$router.push(`/narudzbe/${idNarudzbe}`);
         },
-        async spremiArtikal(redak) {
-            //spremi artikal
+        kolicinaEdit(redak: Artikal, zaglavlje: any): boolean {
+            return zaglavlje.sqlName === "kolicina" && redak.edit == true;
+        },
+        async azurirajArtikle(redak: Artikal) {
+            redak.edit = false;
+            // console.log(this.retci);
+            console.log(this.artikliURL);
+            // try {
+            //     let response = await fetch(this.artikliURL, {
+            //         method: "PUT",
+            //         headers: {
+            //             "Content-Type": "application/json",
+            //         },
+            //     });
+            //     if (!response.ok) {
+            //         throw new Error("Server problem");
+            //     }
+            //     redak.edit = false;
+            // } catch (error) {
+            //     console.log(error);
+            // }
         },
     },
 });
@@ -80,9 +111,9 @@ td {
     border-bottom: 1px solid #ddd;
 }
 .artikli {
-    width: 10.7%;
+    width: 10.2%;
 }
 .narudzbe {
-    width: 14%;
+    width: 15%;
 }
 </style>

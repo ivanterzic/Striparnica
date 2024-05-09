@@ -1,31 +1,42 @@
 <template>
     <div>
-        <div class="form-button nav-button back-blue">Prethodna</div>
-        <div class="form-button nav-button back-blue">Sljedeća</div>
-        <NarudzbaForm :narudzba="narudzba" :id="narudzba.idNarudzbe" :mogucnosti="mogucnosti" />
+        <div class="form-button nav-button back-blue" @click="dohvatiSusjednu(prethodnaURL)">Prethodna</div>
+        <div class="form-button nav-button back-blue" @click="dohvatiSusjednu(sljedecaURL)">Sljedeća</div>
+        <NarudzbaForm v-if="narudzba && mogucnosti" :narudzba="narudzba" :mogucnosti="mogucnosti" />
         <h2>Lista artikala</h2>
-        <Table :zaglavlja="zaglavlja" :retci="artikli" :content="'artikli'" :id="id" />
+        <Table
+            v-if="artikli.length"
+            :zaglavlja="zaglavlja"
+            :retci="artikli"
+            :content="'artikli'"
+            :id="narudzba.idnarudzbe"
+        />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+//components
 import NarudzbaForm from "../components/NarudzbaForm.vue";
 import Table from "../components/Table.vue";
+//types
 import { Artikal } from "../types/Artikal";
+import { Narudzba } from "../types/Narudzba";
 
 export default defineComponent({
     components: { NarudzbaForm, Table },
     props: {
         id: {
-            type: Number,
+            type: String,
             required: true,
         },
     },
     data() {
         return {
-            narudzbaBaseURL: "http://localhost:3000/",
-            mogucnostiURL: "http://localhost:3000/mogucnosti",
+            mogucnostiURL: "http://localhost:3000/narudzbe/stranikljucevi",
+            narudzba: null as Narudzba | null,
+            artikli: [] as Artikal[],
+            mogucnosti: null,
             zaglavlja: [
                 { displayName: "Naziv artikla", sqlName: "naziv" },
                 { displayName: "Opis artikla", sqlName: "opis" },
@@ -36,74 +47,59 @@ export default defineComponent({
                 { displayName: "Dostupna količina", sqlName: "dostupnakolicina" },
                 { displayName: "Tražena količina", sqlName: "kolicina" },
             ],
-            narudzba: {
-                idnarudzbe: 3,
-                datumstvaranja: "2023-03-08",
-                datumzaprimanja: null,
-                status: "u tijeku",
-                iddobavljaca: 4,
-                mbrreferenta: "1006474746334",
-            },
-            artikli: [] as Artikal[],
-            mogucnosti: {
-                status: ["potvrdena", "u tijeku", "nepotvrdena"],
-                iddobavljaca: [2, 3, 4],
-                mbrreferenta: ["1006474746334", "3824629348629", "..."],
-            },
         };
+    },
+    mounted() {
+        this.dohvatiNarudzbu();
+        this.dohvatiMogucnosti();
     },
     computed: {
         narudzbaURL(): string {
-            return this.narudzbaBaseURL + this.id;
+            return `http://localhost:3000/narudzbe/${this.id}`;
+        },
+        prethodnaURL(): string {
+            return `http://localhost:3000/narudzbe/prethodna/${this.id}`;
+        },
+        sljedecaURL(): string {
+            return `http://localhost:3000/narudzbe/sljedeca/${this.id}`;
         },
     },
-    mounted() {
-        for (let i = 0; i < 25; i++) {
-            this.artikli.push({
-                idartikla: 2,
-                naziv: "strip",
-                opis: "opis",
-                dostupnakolicina: 12,
-                cijena: 7,
-                pdv: 0.34,
-                izdavac: "dinamo",
-                izdanje: "prvo",
-                kolicina: 4,
-                edit: false,
-            });
-        }
-        // this.getNarudzba();
-        // this.getMogucnosti();
-    },
     methods: {
-        async getNarudzba() {
+        async dohvatiNarudzbu(): Promise<void> {
             try {
-                let response = await fetch(this.narudzbaURL, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
+                let response = await fetch(this.narudzbaURL);
                 if (!response.ok) {
-                    throw new Error("Server problem");
+                    throw new Error("Greška kod dohvaćanja narudžbe");
                 }
-                this.narudzba = await response.json();
+                let data = await response.json();
+                this.narudzba = data.narudzba;
+                this.artikli = data.artikli;
             } catch (error) {
                 console.log(error);
             }
         },
-        async getMogucnosti() {
+        async dohvatiMogucnosti(): Promise<void> {
             try {
-                let response = await fetch(this.mogucnostiURL, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
+                let response = await fetch(this.mogucnostiURL);
                 if (!response.ok) {
-                    throw new Error("Server problem");
+                    throw new Error("Greška kod dohvaćanja mogućnosti");
                 }
                 this.mogucnosti = await response.json();
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async dohvatiSusjednu(url: string): Promise<void> {
+            try {
+                let response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error("Greška kod prelaska na susjednu narudžbu");
+                }
+                let data = await response.json();
+                this.narudzba = data.narudzba;
+                this.artikli = data.artikli;
+                console.log(this.narudzba);
+                this.$router.push(`/narudzbe/${data.narudzba.idnarudzbe}`);
             } catch (error) {
                 console.log(error);
             }
@@ -115,8 +111,9 @@ export default defineComponent({
 <style scoped>
 .nav-button {
     display: inline-block;
-    margin-top: 25px;
-    margin-left: 25px;
+    margin-top: 3vh;
+    margin-left: 2.5vw;
     margin-right: 0;
+    margin-bottom: 0;
 }
 </style>

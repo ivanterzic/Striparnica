@@ -45,7 +45,7 @@ nav a:hover {
 .button-link {
     display: inline-block;
     padding: 10px;
-    border-radius: 3px;
+    border-radius: 5px;
     margin-right: 20px;
 }
 .button-link:hover {
