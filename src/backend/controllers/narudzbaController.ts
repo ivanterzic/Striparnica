@@ -152,12 +152,21 @@ export class NarudzbaController{
                 idartikla: number
                 kolicina: number
             }> = []
-
-            for (let stavka of JSON.parse(req.body.stavkenarudzbe)) {
-                artikli.push({
-                    idartikla: stavka.idartikla,
-                    kolicina: stavka.kolicina
-                });
+            if (typeof req.body.stavkenarudzbe === 'string'){
+                for (let stavka of JSON.parse(req.body.stavkenarudzbe)) {
+                    artikli.push({
+                        idartikla: stavka.idartikla,
+                        kolicina: stavka.kolicina
+                    });
+                }
+            }
+            else {
+                for (let stavka of req.body.stavkenarudzbe) {
+                    artikli.push({
+                        idartikla: stavka.idartikla,
+                        kolicina: stavka.kolicina
+                    });
+                }
             }
             let result = await Narudzba.urediArtikleNarudzbe(id, artikli);
             res.json(result);
