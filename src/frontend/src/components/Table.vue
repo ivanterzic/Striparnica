@@ -3,7 +3,7 @@
         <TableHead :zaglavlja="zaglavlja" :content="content" />
         <tbody>
             <tr v-for="(redak, index) in retci" :key="index">
-                <td v-if="content == 'artikli'">{{ index }}</td>
+                <td v-if="content == 'artikli'">{{ index + 1 }}</td>
                 <td
                     v-for="zaglavlje in zaglavlja"
                     :key="zaglavlje"

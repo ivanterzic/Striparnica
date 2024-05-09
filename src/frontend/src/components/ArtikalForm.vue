@@ -19,6 +19,7 @@
                 <input type="number" v-model="kolicina" />
             </div>
             <div class="artikal-button back-green" @click="dodajArtikal">Spremi</div>
+            <div class="artikal-button back-red" @click="odbaci">Odbaci</div>
         </div>
     </div>
 </template>
@@ -76,6 +77,21 @@ export default defineComponent({
             this.artikal.kolicina = this.kolicina;
             this.$emit("novi-artikal", this.artikal);
         },
+        odbaci() {
+            this.$emit("close");
+            this.idartikla = null;
+            this.kolicina = null;
+            this.artikal = {
+                idartikla: null,
+                naziv: "",
+                opis: "",
+                dostupnakolicina: null,
+                cijena: null,
+                pdv: null,
+                izdavac: "",
+                izdanje: "",
+            };
+        },
     },
 });
 </script>
@@ -122,5 +138,8 @@ export default defineComponent({
     margin-top: 15px;
     border-radius: 5px;
     padding: 10px;
+}
+.artikal-button:hover {
+    cursor: pointer;
 }
 </style>

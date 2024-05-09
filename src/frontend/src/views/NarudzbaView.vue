@@ -18,7 +18,7 @@
             @close="showModal = false"
             @novi-artikal="dodajArtikal"
         />
-        <div class="form-button nav-button back-blue" @click="toggleModal">Dodaj artikal</div>
+        <div class="form-button nav-button back-blue margin-bottom" @click="toggleModal">Dodaj artikal</div>
     </div>
 </template>
 
@@ -42,7 +42,7 @@ export default defineComponent({
     },
     data() {
         return {
-            mogucnostiURL: "http://localhost:3000/narudzbe/stranikljucevi",
+            mogucnostiURL: "http://localhost:3000/narudzbe/kljucevi",
             narudzba: null as Narudzba | null,
             artikli: [] as Artikal[],
             mogucnosti: null,
@@ -168,5 +168,8 @@ export default defineComponent({
     margin-left: 2.5vw;
     margin-right: 0;
     margin-bottom: 0;
+}
+.margin-bottom{
+    margin-bottom: 20px
 }
 </style>
