@@ -94,8 +94,6 @@ export default defineComponent({
             this.posaljiArtikle(data);
         },
         async posaljiArtikle(data: ArtikalOsnovno[]): Promise<void> {
-            console.log(this.artikliURL);
-            console.log(data);
             try {
                 let response = await fetch(this.artikliURL, {
                     method: "POST",

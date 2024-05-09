@@ -21,7 +21,7 @@ export default defineComponent({
             narudzbeURL: "http://localhost:3000/narudzbe",
             narudzbe: [] as Narudzba[],
             filteredNarudzbe: [] as Narudzba[],
-            mogucnostiURL: "http://localhost:3000/narudzbe/stranikljucevi",
+            mogucnostiURL: "http://localhost:3000/narudzbe/kljucevi",
             mogucnosti: null,
             zaglavlja: [
                 { displayName: "ID narudžbe", sqlName: "idnarudzbe" },

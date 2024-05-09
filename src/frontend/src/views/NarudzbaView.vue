@@ -12,6 +12,13 @@
             :id="narudzba.idnarudzbe"
             @refresh="dohvatiNarudzbu"
         />
+        <ArtikalForm
+            :showModal="showModal"
+            :sviArtikli="sviArtikli"
+            @close="showModal = false"
+            @novi-artikal="dodajArtikal"
+        />
+        <div class="form-button nav-button back-blue" @click="toggleModal">Dodaj artikal</div>
     </div>
 </template>
 
@@ -20,12 +27,13 @@ import { defineComponent } from "vue";
 //components
 import NarudzbaForm from "../components/NarudzbaForm.vue";
 import Table from "../components/Table.vue";
+import ArtikalForm from "../components/ArtikalForm.vue";
 //types
 import { Artikal } from "../types/Artikal";
 import { Narudzba } from "../types/Narudzba";
 
 export default defineComponent({
-    components: { NarudzbaForm, Table },
+    components: { NarudzbaForm, Table, ArtikalForm },
     props: {
         id: {
             type: String,
@@ -48,6 +56,8 @@ export default defineComponent({
                 { displayName: "Količina (skladište)", sqlName: "dostupnakolicina" },
                 { displayName: "Tražena količina", sqlName: "kolicina" },
             ],
+            showModal: false,
+            sviArtikli: [] as Artikal[],
         };
     },
     mounted() {
@@ -63,6 +73,10 @@ export default defineComponent({
         },
         sljedecaURL(): string {
             return `http://localhost:3000/narudzbe/sljedeca/${this.id}`;
+        },
+
+        artikliURL(): string {
+            return this.narudzbaURL + "/urediartikle";
         },
     },
     methods: {
@@ -99,8 +113,46 @@ export default defineComponent({
                 let data = await response.json();
                 this.narudzba = data.narudzba;
                 this.artikli = data.artikli;
-                console.log(this.narudzba);
                 this.$router.push(`/narudzbe/${data.narudzba.idnarudzbe}`);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async toggleModal() {
+            this.showModal = !this.showModal;
+            try {
+                let response = await fetch("http://localhost:3000/artikli");
+                if (!response.ok) {
+                    throw new Error("Greška kod dohvaćanja artikala");
+                }
+                let data = await response.json();
+                this.sviArtikli = data.filter((a1: Artikal) => {
+                    let flag = false;
+                    this.artikli.forEach((a2: Artikal) => {
+                        if (a1.idartikla == a2.idartikla) flag = true;
+                    });
+                    return !flag;
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async dodajArtikal(artikal: Artikal): Promise<void> {
+            this.artikli.push(artikal);
+            this.showModal = !this.showModal;
+            try {
+                let response = await fetch(this.artikliURL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        stavkenarudzbe: this.artikli,
+                    }),
+                });
+                if (!response.ok) {
+                    throw new Error("Server problem");
+                }
             } catch (error) {
                 console.log(error);
             }

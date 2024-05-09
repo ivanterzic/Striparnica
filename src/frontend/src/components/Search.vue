@@ -12,16 +12,14 @@
             class="search-field"
             @input="emitirajFilter"
         />
-        <select
+        <input
             v-if="searchParams.key == 'idnarudzbe'"
             v-model="searchParams.value"
+            type="text"
             class="search-field"
-            @change="emitirajFilter"
-        >
-            <option v-for="mogucnost in mogucnosti['idnarudzbi']" :key="mogucnost">
-                {{ mogucnost }}
-            </option>
-        </select>
+            @input="emitirajFilter"
+        />
+
         <select
             v-if="searchParams.key == 'status'"
             v-model="searchParams.value"

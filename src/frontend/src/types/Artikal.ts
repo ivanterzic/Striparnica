@@ -7,8 +7,20 @@ export type Artikal = {
     pdv: number;
     izdavac: string;
     izdanje: string;
-    kolicina: number;
-    edit: boolean;
+    kolicina?: number;
+    edit?: boolean;
+};
+
+export type ArtikalForm = {
+    idartikla?: number | null;
+    naziv: string;
+    opis: string;
+    dostupnakolicina: number | null;
+    cijena: number | null;
+    pdv: number | null;
+    izdavac: string;
+    izdanje: string;
+    kolicina?: number | null;
 };
 
 export type ArtikalOsnovno = {
