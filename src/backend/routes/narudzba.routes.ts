@@ -5,7 +5,7 @@ import { narudzbaVallidation } from '../vallidation/NarudzbaVallidation';
 
 const router = Router();
 
-router.get('/stranikljucevi', NarudzbaController.apiDohvatSvihStranihKljuceva); 
+router.get('/kljucevi', NarudzbaController.apiDohvatSvihKljuceva); 
 router.get('/statusi', NarudzbaController.apiDohvatiSveStatuseNarudzbi); 
 
 router.get('/sljedeca/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimVecimID); 

@@ -39,11 +39,12 @@ export class NarudzbaController{
         }
     }
 
-    static async apiDohvatSvihStranihKljuceva(req : Request, res : Response){
+    static async apiDohvatSvihKljuceva(req : Request, res : Response){
         try {
             let mbrreferenata = await Zaposlenik.dohvatiSveReferenteNabave();
             let statusi = await Narudzba.dohvatiSveStatuseNarudzbi();
             let iddobavljaca = await Dobavljac.dohvatiSveDobavljace();
+            let narudzbe = await Narudzba.dohvatiSveNarudzbe();
             res.json({
                 mbrreferanata: mbrreferenata.map((z) => z.mbr),
                 statusi: statusi, 
@@ -52,6 +53,9 @@ export class NarudzbaController{
                         id: d.iddobavljaca,
                         ime: d.ime
                     }
+                }),
+                narudzbe: narudzbe.map((n) => {
+                    return n.idnarudzbe
                 })
             });
         }
