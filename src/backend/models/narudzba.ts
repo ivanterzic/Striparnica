@@ -24,7 +24,9 @@ const narudzbaClass =
             }
     
             static async dohvatiSveNarudzbe() {
-                let result = await prisma.narudzba.findMany();
+                let result = await prisma.narudzba.findMany(
+                    {orderBy: {idnarudzbe: 'asc'}}
+                );
                 let result2 = [];
                 for (let r of result) {
                     result2.push({
