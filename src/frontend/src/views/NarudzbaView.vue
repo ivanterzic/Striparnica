@@ -14,7 +14,12 @@
         >
             Sljedeća
         </div>
-        <NarudzbaForm v-if="narudzba && mogucnosti" :narudzba="narudzba" :mogucnosti="mogucnosti" />
+        <NarudzbaForm
+            v-if="narudzba && mogucnosti"
+            :narudzba="narudzba"
+            :mogucnosti="mogucnosti"
+            @refresh="dohvatiNarudzbu(narudzbaURL, id)"
+        />
         <h2>Lista artikala</h2>
         <Table
             v-if="artikli.length"

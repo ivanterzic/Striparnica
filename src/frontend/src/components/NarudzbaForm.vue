@@ -5,18 +5,18 @@
             <input
                 v-if="labela.sqlName == 'datumstvaranja' || labela.sqlName == 'datumzaprimanja'"
                 type="date"
-                v-model="narudzbaMutable[labela.sqlName]"
+                v-model="narudzba[labela.sqlName]"
             />
             <select
                 v-if="labela.sqlName == 'status' || labela.sqlName == 'mbrreferenta'"
-                v-model="narudzbaMutable[labela.sqlName]"
+                v-model="narudzba[labela.sqlName]"
                 required
             >
                 <option v-for="mogucnost in mogucnosti[labela.plural]" :key="mogucnost">
                     {{ mogucnost }}
                 </option>
             </select>
-            <select v-if="labela.sqlName == 'iddobavljaca'" v-model="narudzbaMutable[labela.sqlName]" required>
+            <select v-if="labela.sqlName == 'iddobavljaca'" v-model="narudzba[labela.sqlName]" required>
                 <option v-for="dobavljac in mogucnosti[labela.plural]" :key="dobavljac" :value="dobavljac.id">
                     ID: {{ dobavljac.id }} - {{ dobavljac.ime }}
                 </option>
@@ -48,7 +48,6 @@ export default defineComponent({
     },
     data() {
         return {
-            narudzbaURL: "http://localhost:3000/narudzbe/" + this.narudzba.idnarudzbe,
             labele: [
                 { displayName: "Datum stvaranja:", sqlName: "datumstvaranja" },
                 { displayName: "Datum zaprimanja:", sqlName: "datumzaprimanja" },
@@ -59,8 +58,8 @@ export default defineComponent({
         };
     },
     computed: {
-        narudzbaMutable(): Narudzba {
-            return this.narudzba;
+        narudzbaURL(): string {
+            return "http://localhost:3000/narudzbe/" + this.narudzba.idnarudzbe;
         },
     },
     methods: {
@@ -71,14 +70,14 @@ export default defineComponent({
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(this.narudzbaMutable),
+                    body: JSON.stringify(this.narudzba),
                 });
-                if (response.ok) {
-                    this.narudzbaMutable = await response.json();
-                } else if (response.status === 400) {
+                // if (response.ok) {
+                //     this.$emit("refresh");
+                if (response.status === 400) {
                     let error = (await response.json()).error;
                     alert(error);
-                } else {
+                } else if (!response.ok) {
                     throw new Error("Greška kod ažuriranja narudžbe");
                 }
             } catch (error) {

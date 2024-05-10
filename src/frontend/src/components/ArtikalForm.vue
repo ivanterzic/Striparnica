@@ -73,12 +73,7 @@ export default defineComponent({
                 return artikal.idartikla == this.idartikla;
             })[0];
         },
-        dodajArtikal() {
-            this.artikal.kolicina = this.kolicina;
-            this.$emit("novi-artikal", this.artikal);
-        },
-        odbaci() {
-            this.$emit("close");
+        cleanForm() {
             this.idartikla = null;
             this.kolicina = null;
             this.artikal = {
@@ -91,6 +86,15 @@ export default defineComponent({
                 izdavac: "",
                 izdanje: "",
             };
+        },
+        dodajArtikal() {
+            this.artikal.kolicina = this.kolicina;
+            this.$emit("novi-artikal", this.artikal);
+            this.cleanForm();
+        },
+        odbaci() {
+            this.emitFalse();
+            this.cleanForm();
         },
     },
 });
