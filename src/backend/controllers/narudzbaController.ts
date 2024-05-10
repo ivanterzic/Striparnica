@@ -2,9 +2,6 @@ import { Narudzba } from '../models/narudzba';
 import { Request, Response } from 'express';
 import { Zaposlenik } from '../models/zaposlenik';
 import { Dobavljac } from '../models/dobavljac';
-import { Artikal } from '../models/artikal';
-import { parse } from 'path';
-import { artikal } from '@prisma/client';
 
 export class NarudzbaController{
 
