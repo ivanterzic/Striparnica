@@ -1,7 +1,13 @@
 <template>
     <div>
         <h2>Lista narudžbi</h2>
-        <Search v-if="mogucnosti" :zaglavlja="zaglavlja" :mogucnosti="mogucnosti" @filter="filtrirajNarudzbe" />
+        <Search
+            v-if="mogucnosti"
+            :zaglavlja="zaglavlja"
+            :mogucnosti="mogucnosti"
+            @filter="filtrirajNarudzbe"
+            @ocisti-filter="ocistiFilter"
+        />
         <Table :zaglavlja="zaglavlja" :retci="filteredNarudzbe" :content="'narudzbe'" />
     </div>
 </template>
@@ -28,7 +34,7 @@ export default defineComponent({
                 { displayName: "Datum stvaranja", sqlName: "datumstvaranja" },
                 { displayName: "Datum zaprimanja", sqlName: "datumzaprimanja" },
                 { displayName: "Status", sqlName: "status", plural: "statusi" },
-                { displayName: "ID dobavljača", sqlName: "iddobavljaca", plural: "dobavljaci" },
+                { displayName: "Dobavljač", sqlName: "iddobavljaca", plural: "dobavljaci" },
                 { displayName: "MBR referenta", sqlName: "mbrreferenta", plural: "mbrreferenata" },
             ] as Zaglavlje[],
         };
@@ -65,6 +71,9 @@ export default defineComponent({
             this.filteredNarudzbe = this.narudzbe.filter((narudzba: Narudzba) => {
                 return narudzba[searchParams.key] == searchParams.value;
             });
+        },
+        ocistiFilter() {
+            this.filteredNarudzbe = [...this.narudzbe];
         },
     },
 });

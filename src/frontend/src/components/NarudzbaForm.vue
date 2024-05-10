@@ -18,7 +18,7 @@
             </select>
             <select v-if="labela.sqlName == 'iddobavljaca'" v-model="narudzbaMutable[labela.sqlName]" required>
                 <option v-for="dobavljac in mogucnosti[labela.plural]" :key="dobavljac" :value="dobavljac.id">
-                    {{ dobavljac.ime }}
+                    ID: {{dobavljac.id}} - {{ dobavljac.ime }}
                 </option>
             </select>
         </div>
