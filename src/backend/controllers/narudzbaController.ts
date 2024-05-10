@@ -22,7 +22,13 @@ export class NarudzbaController{
         try {
             let id = parseInt(req.params.id);
             let result = await Narudzba.dohvatiNarudzbu(id);
-            res.json(result);
+            let previousId = await Narudzba.dohvatiPrviManjiID(id);
+            let nextId = await Narudzba.dohvatiPrviVeciID(id);
+            res.json({
+                ...result,
+                previousId: previousId,
+                nextId: nextId
+            });
         }
         catch (err) {
             res.status(500).json({ error: err });
@@ -58,40 +64,6 @@ export class NarudzbaController{
                     return n.idnarudzbe
                 })
             });
-        }
-        catch (err) {
-            res.status(500).json({ error: err });
-        }
-    }
-
-    static async apiDohvatiNarudzbuSPrvimVecimID(req : Request, res : Response){
-       try {
-            let id = parseInt(req.params.id);
-            let nextId = await Narudzba.dohvatiPrviVeciID(id);
-            if (nextId) {
-                let result = await Narudzba.dohvatiNarudzbu(nextId);
-                res.json(result);
-            }
-            else {
-                res.json(null);
-            }
-        }
-        catch (err) {
-            res.status(500).json({ error: err });
-        }
-    }
-
-    static async apiDohvatiNarudzbuSPrvimManjimID(req : Request, res : Response){
-        try {
-            let id = parseInt(req.params.id);
-            let previousId = await Narudzba.dohvatiPrviManjiID(id);
-            if (previousId) {
-                let result = await Narudzba.dohvatiNarudzbu(previousId);
-                res.json(result);
-            }
-            else {
-                res.json(null);
-            }
         }
         catch (err) {
             res.status(500).json({ error: err });

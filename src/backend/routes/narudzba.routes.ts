@@ -8,9 +8,6 @@ const router = Router();
 router.get('/kljucevi', NarudzbaController.apiDohvatSvihKljuceva); 
 router.get('/statusi', NarudzbaController.apiDohvatiSveStatuseNarudzbi); 
 
-router.get('/sljedeca/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimVecimID); 
-router.get('/prethodna/:id', NarudzbaController.apiDohvatiNarudzbuSPrvimManjimID); 
-
 router.get('/:id', NarudzbaController.apiDohvatiNarudzbu); 
 router.get('/', NarudzbaController.apiDohvatiSveNarudzbe); 
 
