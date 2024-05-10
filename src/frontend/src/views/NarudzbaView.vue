@@ -1,7 +1,19 @@
 <template>
     <div>
-        <div class="form-button nav-button back-blue" @click="dohvatiSusjednu(prethodnaURL)">Prethodna</div>
-        <div class="form-button nav-button back-blue" @click="dohvatiSusjednu(sljedecaURL)">Sljedeća</div>
+        <div
+            class="form-button nav-button back-blue"
+            @click="dohvatiNarudzbu(prethodnaURL, prethodnaNarudzba)"
+            :class="{ disabled: !prethodnaNarudzba }"
+        >
+            Prethodna
+        </div>
+        <div
+            class="form-button nav-button back-blue"
+            @click="dohvatiNarudzbu(sljedecaURL, sljedecaNarudzba)"
+            :class="{ disabled: !sljedecaNarudzba }"
+        >
+            Sljedeća
+        </div>
         <NarudzbaForm v-if="narudzba && mogucnosti" :narudzba="narudzba" :mogucnosti="mogucnosti" />
         <h2>Lista artikala</h2>
         <Table
@@ -10,7 +22,7 @@
             :retci="artikli"
             :content="'artikli'"
             :id="narudzba.idnarudzbe"
-            @refresh="dohvatiNarudzbu"
+            @refresh="dohvatiNarudzbu(narudzbaURL, id)"
         />
         <ArtikalForm
             :showModal="showModal"
@@ -31,6 +43,7 @@ import ArtikalForm from "../components/ArtikalForm.vue";
 //types
 import { Artikal } from "../types/Artikal";
 import { Narudzba } from "../types/Narudzba";
+import { Zaglavlje } from "../types/Zaglavlje";
 
 export default defineComponent({
     components: { NarudzbaForm, Table, ArtikalForm },
@@ -44,6 +57,8 @@ export default defineComponent({
         return {
             mogucnostiURL: "http://localhost:3000/narudzbe/kljucevi",
             narudzba: null as Narudzba | null,
+            prethodnaNarudzba: null as number | null,
+            sljedecaNarudzba: null as number | null,
             artikli: [] as Artikal[],
             mogucnosti: null,
             zaglavlja: [
@@ -55,13 +70,13 @@ export default defineComponent({
                 { displayName: "Izdanje", sqlName: "izdanje" },
                 { displayName: "Količina (skladište)", sqlName: "dostupnakolicina" },
                 { displayName: "Tražena količina", sqlName: "kolicina" },
-            ],
+            ] as Zaglavlje[],
             showModal: false,
             sviArtikli: [] as Artikal[],
         };
     },
     mounted() {
-        this.dohvatiNarudzbu();
+        this.dohvatiNarudzbu(this.narudzbaURL, this.id);
         this.dohvatiMogucnosti();
     },
     computed: {
@@ -69,26 +84,29 @@ export default defineComponent({
             return `http://localhost:3000/narudzbe/${this.id}`;
         },
         prethodnaURL(): string {
-            return `http://localhost:3000/narudzbe/prethodna/${this.id}`;
+            return `http://localhost:3000/narudzbe/${this.prethodnaNarudzba}`;
         },
         sljedecaURL(): string {
-            return `http://localhost:3000/narudzbe/sljedeca/${this.id}`;
+            return `http://localhost:3000/narudzbe/${this.sljedecaNarudzba}`;
         },
-
         artikliURL(): string {
             return this.narudzbaURL + "/urediartikle";
         },
     },
     methods: {
-        async dohvatiNarudzbu(): Promise<void> {
+        async dohvatiNarudzbu(url: string, id: string | number): Promise<void> {
+            if (!id) return;
             try {
-                let response = await fetch(this.narudzbaURL);
+                let response = await fetch(url);
                 if (!response.ok) {
                     throw new Error("Greška kod dohvaćanja narudžbe");
                 }
                 let data = await response.json();
                 this.narudzba = data.narudzba;
                 this.artikli = data.artikli;
+                this.prethodnaNarudzba = data.previousId;
+                this.sljedecaNarudzba = data.nextId;
+                this.$router.push(`/narudzbe/${id}`);
             } catch (error) {
                 console.log(error);
             }
@@ -100,20 +118,6 @@ export default defineComponent({
                     throw new Error("Greška kod dohvaćanja mogućnosti");
                 }
                 this.mogucnosti = await response.json();
-            } catch (error) {
-                console.log(error);
-            }
-        },
-        async dohvatiSusjednu(url: string): Promise<void> {
-            try {
-                let response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error("Greška kod prelaska na susjednu narudžbu");
-                }
-                let data = await response.json();
-                this.narudzba = data.narudzba;
-                this.artikli = data.artikli;
-                this.$router.push(`/narudzbe/${data.narudzba.idnarudzbe}`);
             } catch (error) {
                 console.log(error);
             }
@@ -151,7 +155,7 @@ export default defineComponent({
                     }),
                 });
                 if (!response.ok) {
-                    throw new Error("Server problem");
+                    throw new Error("Greška kod dodavanja artikla");
                 }
             } catch (error) {
                 console.log(error);
@@ -169,7 +173,13 @@ export default defineComponent({
     margin-right: 0;
     margin-bottom: 0;
 }
-.margin-bottom{
-    margin-bottom: 20px
+.margin-bottom {
+    margin-bottom: 20px;
+}
+.disabled {
+    background-color: rgb(120, 120, 120);
+}
+.disabled:hover {
+    cursor: not-allowed;
 }
 </style>

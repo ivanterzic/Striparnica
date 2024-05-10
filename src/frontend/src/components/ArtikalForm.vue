@@ -3,10 +3,10 @@
         <div class="modal-background" @click.self="emitFalse"></div>
         <div class="modal-content">
             <div class="element">
-                <label>ID artikla:</label>
+                <label>Naziv artikla:</label>
                 <select @change="fillModal" v-model="idartikla">
                     <option v-for="artikal in sviArtikli" :key="artikal" :value="artikal.idartikla">
-                        {{ artikal.naziv }}
+                        ID: {{ artikal.idartikla }} - {{ artikal.naziv }}
                     </option>
                 </select>
             </div>
@@ -73,7 +73,7 @@ export default defineComponent({
             })[0];
         },
         dodajArtikal() {
-            if (!this.kolicina || !this.idartikla) return;
+            if (!this.kolicina || !this.idartikla || this.kolicina <= 0) return;
             this.artikal.kolicina = this.kolicina;
             this.$emit("novi-artikal", this.artikal);
         },
