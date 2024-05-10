@@ -47,6 +47,9 @@ const narudzbaClass =
                         idnarudzbe: id
                     }
                 });
+                if (!result) {
+                    throw "Narudzba ne postoji";
+                }
                 let artikli = await prisma.narudzbaartikli.findMany({
                     where: {
                         idnarudzbe: id
@@ -177,21 +180,13 @@ const narudzbaClass =
                         idnarudzbe: id
                     }
                 });
-                if (!narudzba) {
-                    return { error: "Narudzba ne postoji" };
-                }
-
                 for (let artikal of artikli) {
                     let result = await prisma.artikal.findUnique({
                         where: {
                             idartikla: artikal.idartikla
                         }
                     });
-                    if (!result) {
-                        return { error: "Artikal ne postoji" };
-                    }
                 }
-
                 let result = await prisma.narudzbaartikli.deleteMany({
                     where: {
                         idnarudzbe: id

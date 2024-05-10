@@ -10,7 +10,7 @@ export class ArtikalController{
             res.json(artikal);
         }
         catch (err) {
-            res.status(500).json({error: err});
+            res.status(400).json({error: err});
         }
     }
 
@@ -20,7 +20,7 @@ export class ArtikalController{
             res.json(artikli);
         }
         catch (err) {
-            res.status(500).json({error: err});
+            res.status(400).json({error: err});
         }
     }
 

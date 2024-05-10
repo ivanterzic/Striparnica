@@ -11,7 +11,7 @@ export class NarudzbaController{
             res.json(narudzbe);
         }
         catch (err) {
-            res.status(500).json({ error: err });
+            res.status(400).json({ error: err });
         }
     }
 
@@ -19,6 +19,7 @@ export class NarudzbaController{
         try {
             let id = parseInt(req.params.id);
             let result = await Narudzba.dohvatiNarudzbu(id);
+
             let previousId = await Narudzba.dohvatiPrviManjiID(id);
             let nextId = await Narudzba.dohvatiPrviVeciID(id);
             res.json({
@@ -28,7 +29,7 @@ export class NarudzbaController{
             });
         }
         catch (err) {
-            res.status(500).json({ error: err });
+            res.status(400).json({ error: err });
         }
     }
 
@@ -38,7 +39,7 @@ export class NarudzbaController{
             res.json(statusi);
         }
         catch (err) {
-            res.status(500).json({ error: err });
+            res.status(400).json({ error: err });
         }
     }
 
@@ -63,7 +64,7 @@ export class NarudzbaController{
             });
         }
         catch (err) {
-            res.status(500).json({ error: err });
+            res.status(400).json({ error: err });
         }
     }
 
@@ -81,7 +82,7 @@ export class NarudzbaController{
             res.json(result);
         }
         catch (err) {
-            res.status(500).json({ error: err });
+            res.status(400).json({ error: err });
         }
     }
 
@@ -99,7 +100,7 @@ export class NarudzbaController{
             res.json(result);
         }
         catch (err) {
-            res.status(500).json({ error: err });
+            res.status(400).json({ error: err });
         }
     }
 
@@ -110,17 +111,13 @@ export class NarudzbaController{
             res.json(result);
         }
         catch (err) {
-            res.status(500).json({ error: err });
+            res.status(400).json({ error: err });
         }
     }
 
     static async apiUrediArtikleNarudzbe(req : Request, res : Response){
         try {
             let id = parseInt(req.params.id);
-            if (!req.body.stavkenarudzbe) {
-                res.status(400).json({ error: 'Nedostaju stavke narudzbe' });
-                return;
-            }
             let artikli : Array<{
                 idartikla: number
                 kolicina: number
@@ -145,7 +142,7 @@ export class NarudzbaController{
             res.json(result);
         }
         catch (err) {
-            res.status(500).json({ error: err });
+            res.status(400).json({ error: err });
         }
     }
 }

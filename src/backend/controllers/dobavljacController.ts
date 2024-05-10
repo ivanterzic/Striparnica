@@ -10,7 +10,7 @@ export class DobavljacController{
             res.json(dobavljaci);
         }
         catch (err) {
-            res.status(500).json({error: err});
+            res.status(400).json({error: err});
         }
     }
 
@@ -21,7 +21,7 @@ export class DobavljacController{
             res.json(dobavljac);
         }
         catch (err) {
-            res.status(500).json({error: err});
+            res.status(400).json({error: err});
         }
     }
 
@@ -31,7 +31,7 @@ export class DobavljacController{
             res.json(idovi.map((dobavljac: dobavljac) => dobavljac.iddobavljaca));
         }
         catch (err) {
-            res.status(500).json({error: err});
+            res.status(400).json({error: err});
         }
     }
 

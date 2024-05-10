@@ -10,7 +10,7 @@ export class ZaposlenikController {
             res.json(zaposlenik);
         }
         catch (err) {
-            res.status(500).json({error: err});
+            res.status(400).json({error: err});
         }
     }
 
@@ -20,7 +20,7 @@ export class ZaposlenikController {
             res.json(zaposlenici);
         }
         catch (err) {
-            res.status(500).json({error: err});
+            res.status(400).json({error: err});
         }
     }
 
@@ -30,7 +30,7 @@ export class ZaposlenikController {
             res.json(referenti);
         }
         catch (err) {
-            res.status(500).json({error: err});
+            res.status(400).json({error: err});
         }
     }
 
@@ -41,7 +41,7 @@ export class ZaposlenikController {
             res.json(referentiId);
         }
         catch (err) {
-            res.status(500).json({error: err});
+            res.status(400).json({error: err});
         }
     }
 
