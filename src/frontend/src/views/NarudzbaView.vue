@@ -22,7 +22,7 @@
             :retci="artikli"
             :content="'artikli'"
             :id="narudzba.idnarudzbe"
-            @refresh="dohvatiNarudzbu"
+            @refresh="dohvatiNarudzbu(narudzbaURL, id)"
         />
         <ArtikalForm
             :showModal="showModal"
