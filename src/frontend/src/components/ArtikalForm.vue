@@ -26,6 +26,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
+//types
 import { Artikal, ArtikalForm } from "../types/Artikal";
 
 export default defineComponent({
@@ -73,7 +74,6 @@ export default defineComponent({
             })[0];
         },
         dodajArtikal() {
-            if (!this.kolicina || !this.idartikla || this.kolicina <= 0) return;
             this.artikal.kolicina = this.kolicina;
             this.$emit("novi-artikal", this.artikal);
         },

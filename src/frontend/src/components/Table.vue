@@ -16,7 +16,7 @@
                     <div @click="detaljiNarudzbe(redak.idnarudzbe)" class="button-link back-blue">Detalji</div>
                 </td>
                 <td v-if="content != 'narudzbe'">
-                    <div v-if="redak.edit" @click="azurirajArtikal(redak)" class="button-link back-green">Spremi</div>
+                    <div v-if="redak.edit" @click="posaljiArtikle(retci)" class="button-link back-green">Spremi</div>
                     <div v-else @click="redak.edit = true" class="button-link back-yellow">Ažuriraj</div>
                     <div class="button-link back-red" @click="obrisiArtikal(redak)">Obriši</div>
                 </td>
@@ -27,9 +27,11 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
+//types
 import { Narudzba } from "../types/Narudzba";
-import { Artikal, ArtikalOsnovno } from "../types/Artikal";
+import { Artikal } from "../types/Artikal";
 import { Zaglavlje } from "../types/Zaglavlje";
+//components
 import TableHead from "../components/TableHead.vue";
 
 export default defineComponent({
@@ -69,31 +71,12 @@ export default defineComponent({
         kolicinaEdit(redak: Artikal, zaglavlje: any): boolean {
             return zaglavlje.sqlName === "kolicina" && redak.edit == true;
         },
-        azurirajArtikal(): void {
-            let data: ArtikalOsnovno[] = [];
-            this.retci.forEach((redak: any) => {
-                if (redak.kolicina != 0) {
-                    data.push({
-                        idartikla: redak.idartikla,
-                        kolicina: redak.kolicina,
-                    });
-                }
-            });
-            this.posaljiArtikle(data);
-        },
         obrisiArtikal(artikal: Artikal): void {
-            let data: ArtikalOsnovno[] = [];
-            this.retci.forEach((redak: any) => {
-                if (redak.idartikla != artikal.idartikla) {
-                    data.push({
-                        idartikla: redak.idartikla,
-                        kolicina: redak.kolicina,
-                    });
-                }
-            });
+            let data: Artikal[] = this.retci as Artikal[];
+            data = data.filter((redak: Artikal) => redak.idartikla != artikal.idartikla);
             this.posaljiArtikle(data);
         },
-        async posaljiArtikle(data: ArtikalOsnovno[]): Promise<void> {
+        async posaljiArtikle(data: Artikal[]): Promise<void> {
             try {
                 let response = await fetch(this.artikliURL, {
                     method: "POST",
@@ -104,10 +87,14 @@ export default defineComponent({
                         stavkenarudzbe: data,
                     }),
                 });
-                if (!response.ok) {
-                    throw new Error("Server problem");
+                if (response.ok) {
+                    this.$emit("refresh");
+                } else if (response.status === 400) {
+                    let error = (await response.json()).error;
+                    alert(error);
+                } else {
+                    throw new Error("Greška kod ažuriranja artikla");
                 }
-                this.$emit("refresh");
             } catch (error) {
                 console.log(error);
             }

@@ -18,7 +18,7 @@
             </select>
             <select v-if="labela.sqlName == 'iddobavljaca'" v-model="narudzbaMutable[labela.sqlName]" required>
                 <option v-for="dobavljac in mogucnosti[labela.plural]" :key="dobavljac" :value="dobavljac.id">
-                    ID: {{dobavljac.id}} - {{ dobavljac.ime }}
+                    ID: {{ dobavljac.id }} - {{ dobavljac.ime }}
                 </option>
             </select>
         </div>
@@ -66,7 +66,6 @@ export default defineComponent({
     methods: {
         async azurirajNarudzbu(): Promise<void> {
             try {
-                // console.log(this.narudzbaMutable);
                 let response = await fetch(this.narudzbaURL, {
                     method: "PUT",
                     headers: {
@@ -74,10 +73,14 @@ export default defineComponent({
                     },
                     body: JSON.stringify(this.narudzbaMutable),
                 });
-                if (!response.ok) {
-                    throw new Error("Greška kod ažuriranja narudžbe na poslužitelju");
+                if (response.ok) {
+                    this.narudzbaMutable = await response.json();
+                } else if (response.status === 400) {
+                    let error = (await response.json()).error;
+                    alert(error);
+                } else {
+                    throw new Error("Greška kod ažuriranja narudžbe");
                 }
-                this.narudzbaMutable = await response.json();
             } catch (error) {
                 console.log(error);
             }
@@ -88,7 +91,7 @@ export default defineComponent({
                     method: "DELETE",
                 });
                 if (!response.ok) {
-                    throw new Error("Greška kod brisanja narudžbe na poslužitelju");
+                    throw new Error("Greška kod brisanja narudžbe");
                 }
                 this.$router.push("/narudzbe");
             } catch (error) {
