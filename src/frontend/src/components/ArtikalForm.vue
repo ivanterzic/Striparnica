@@ -96,7 +96,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 .element {
     margin: 10px;
 }

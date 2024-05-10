@@ -47,9 +47,10 @@
             @change="emitirajFilter"
         >
             <option v-for="dobavljac in mogucnosti['dobavljaci']" :key="dobavljac" :value="dobavljac.id">
-                {{ dobavljac.ime }}
+                ID: {{ dobavljac.id }} - {{ dobavljac.ime }}
             </option>
         </select>
+        <div class="artikal-button back-red margin-left" @click="ocistiFilter">Očisti Pretragu</div>
     </div>
 </template>
 
@@ -80,8 +81,19 @@ export default defineComponent({
         emitirajFilter() {
             this.$emit("filter", this.searchParams);
         },
+        ocistiFilter() {
+            this.searchParams = {
+                key: "idnarudzbe",
+                value: "",
+            };
+            this.$emit("ocisti-filter");
+        },
     },
 });
 </script>
 
-<style></style>
+<style scoped>
+div.margin-left {
+    margin-left: 2.5vw;
+}
+</style>
