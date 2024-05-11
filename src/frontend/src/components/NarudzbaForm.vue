@@ -5,20 +5,20 @@
             <input
                 v-if="labela.sqlName == 'datumstvaranja' || labela.sqlName == 'datumzaprimanja'"
                 type="date"
-                v-model="narudzbaMutable[labela.sqlName]"
+                v-model="narudzba[labela.sqlName]"
             />
             <select
                 v-if="labela.sqlName == 'status' || labela.sqlName == 'mbrreferenta'"
-                v-model="narudzbaMutable[labela.sqlName]"
+                v-model="narudzba[labela.sqlName]"
                 required
             >
                 <option v-for="mogucnost in mogucnosti[labela.plural]" :key="mogucnost">
                     {{ mogucnost }}
                 </option>
             </select>
-            <select v-if="labela.sqlName == 'iddobavljaca'" v-model="narudzbaMutable[labela.sqlName]" required>
+            <select v-if="labela.sqlName == 'iddobavljaca'" v-model="narudzba[labela.sqlName]" required>
                 <option v-for="dobavljac in mogucnosti[labela.plural]" :key="dobavljac" :value="dobavljac.id">
-                    ID: {{dobavljac.id}} - {{ dobavljac.ime }}
+                    ID: {{ dobavljac.id }} - {{ dobavljac.ime }}
                 </option>
             </select>
         </div>
@@ -48,7 +48,6 @@ export default defineComponent({
     },
     data() {
         return {
-            narudzbaURL: "http://localhost:3000/narudzbe/" + this.narudzba.idnarudzbe,
             labele: [
                 { displayName: "Datum stvaranja:", sqlName: "datumstvaranja" },
                 { displayName: "Datum zaprimanja:", sqlName: "datumzaprimanja" },
@@ -59,25 +58,28 @@ export default defineComponent({
         };
     },
     computed: {
-        narudzbaMutable(): Narudzba {
-            return this.narudzba;
+        narudzbaURL(): string {
+            return "http://localhost:3000/narudzbe/" + this.narudzba.idnarudzbe;
         },
     },
     methods: {
         async azurirajNarudzbu(): Promise<void> {
             try {
-                // console.log(this.narudzbaMutable);
                 let response = await fetch(this.narudzbaURL, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(this.narudzbaMutable),
+                    body: JSON.stringify(this.narudzba),
                 });
-                if (!response.ok) {
-                    throw new Error("Greška kod ažuriranja narudžbe na poslužitelju");
+                // if (response.ok) {
+                //     this.$emit("refresh");
+                if (response.status === 400) {
+                    let error = (await response.json()).error;
+                    alert(error);
+                } else if (!response.ok) {
+                    throw new Error("Greška kod ažuriranja narudžbe");
                 }
-                this.narudzbaMutable = await response.json();
             } catch (error) {
                 console.log(error);
             }
@@ -88,7 +90,7 @@ export default defineComponent({
                     method: "DELETE",
                 });
                 if (!response.ok) {
-                    throw new Error("Greška kod brisanja narudžbe na poslužitelju");
+                    throw new Error("Greška kod brisanja narudžbe");
                 }
                 this.$router.push("/narudzbe");
             } catch (error) {

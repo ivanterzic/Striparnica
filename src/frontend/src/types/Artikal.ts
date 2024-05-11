@@ -22,8 +22,3 @@ export type ArtikalForm = {
     izdanje: string;
     kolicina?: number | null;
 };
-
-export type ArtikalOsnovno = {
-    idartikla: number;
-    kolicina: number;
-};

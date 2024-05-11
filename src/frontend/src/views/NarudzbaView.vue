@@ -14,7 +14,12 @@
         >
             Sljedeća
         </div>
-        <NarudzbaForm v-if="narudzba && mogucnosti" :narudzba="narudzba" :mogucnosti="mogucnosti" />
+        <NarudzbaForm
+            v-if="narudzba && mogucnosti"
+            :narudzba="narudzba"
+            :mogucnosti="mogucnosti"
+            @refresh="dohvatiNarudzbu(narudzbaURL, id)"
+        />
         <h2>Lista artikala</h2>
         <Table
             v-if="artikli.length"
@@ -142,8 +147,6 @@ export default defineComponent({
             }
         },
         async dodajArtikal(artikal: Artikal): Promise<void> {
-            this.artikli.push(artikal);
-            this.showModal = !this.showModal;
             try {
                 let response = await fetch(this.artikliURL, {
                     method: "POST",
@@ -151,10 +154,16 @@ export default defineComponent({
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        stavkenarudzbe: this.artikli,
+                        stavkenarudzbe: [...this.artikli, artikal],
                     }),
                 });
-                if (!response.ok) {
+                if (response.ok) {
+                    this.showModal = !this.showModal;
+                    this.artikli.push(artikal);
+                } else if (response.status === 400) {
+                    let error = (await response.json()).error;
+                    alert(error);
+                } else {
                     throw new Error("Greška kod dodavanja artikla");
                 }
             } catch (error) {
