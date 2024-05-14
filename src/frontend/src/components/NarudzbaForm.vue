@@ -72,8 +72,6 @@ export default defineComponent({
                     },
                     body: JSON.stringify(this.narudzba),
                 });
-                // if (response.ok) {
-                //     this.$emit("refresh");
                 if (response.status === 400) {
                     let error = (await response.json()).error;
                     alert(error);
