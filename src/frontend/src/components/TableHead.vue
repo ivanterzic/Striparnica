@@ -12,11 +12,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
+import { Zaglavlje } from "../types/Zaglavlje";
 
 export default defineComponent({
     props: {
         zaglavlja: {
-            type: Array,
+            type: Array as PropType<Zaglavlje[]>,
             required: true,
         },
         content: {
@@ -37,7 +38,7 @@ th {
     top: 9.9vh;
     z-index: 1;
 }
-.rbr{
-    width: 20px
+.rbr {
+    width: 20px;
 }
 </style>

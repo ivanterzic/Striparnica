@@ -36,7 +36,7 @@
             class="search-field"
             @change="emitirajFilter"
         >
-            <option v-for="mogucnost in mogucnosti['mbrreferanata']" :key="mogucnost">
+            <option v-for="mogucnost in mogucnosti['mbrreferenata']" :key="mogucnost">
                 {{ mogucnost }}
             </option>
         </select>

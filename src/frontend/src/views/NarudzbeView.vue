@@ -9,6 +9,14 @@
             @ocisti-filter="ocistiFilter"
         />
         <Table :zaglavlja="zaglavlja" :retci="filteredNarudzbe" :content="'narudzbe'" />
+        <div class="form-button nav-button back-blue margin-bottom" @click="showModal = !showModal">Dodaj narudžbu</div>
+        <NovaNarudzba
+            v-if="mogucnosti"
+            :showModal="showModal"
+            :zaglavlja="zaglavlja"
+            :mogucnosti="mogucnosti"
+            @close="showModal = false"
+        />
     </div>
 </template>
 
@@ -19,9 +27,10 @@ import { Zaglavlje } from "../types/Zaglavlje";
 import { SearchParams } from "../types/SearchParams";
 import Table from "../components/Table.vue";
 import Search from "../components/Search.vue";
+import NovaNarudzba from "../components/NovaNarudzba.vue";
 
 export default defineComponent({
-    components: { Table, Search },
+    components: { Table, Search, NovaNarudzba },
     data() {
         return {
             narudzbeURL: "http://localhost:3000/narudzbe",
@@ -37,6 +46,7 @@ export default defineComponent({
                 { displayName: "Dobavljač", sqlName: "iddobavljaca", plural: "dobavljaci" },
                 { displayName: "MBR referenta", sqlName: "mbrreferenta", plural: "mbrreferenata" },
             ] as Zaglavlje[],
+            showModal: false,
         };
     },
     mounted() {
@@ -75,6 +85,9 @@ export default defineComponent({
         ocistiFilter() {
             this.filteredNarudzbe = [...this.narudzbe];
         },
+        // toggleModal() {
+        //     this.showModal = !this.showModal;
+        // },
     },
 });
 </script>
