@@ -78,6 +78,24 @@ const zaposlenikClass =
                 return referenti;
             }
 
+            static async provjeriReferentaNabave(mbr: string) {
+                let referentId = await prisma.uloga.findUnique({
+                    where: {
+                        naziv: 'referent nabave'
+                    }
+                });
+                let referent = await prisma.zaposlenik.findFirst({
+                    where: {
+                        mbr: mbr,
+                        iduloge: referentId?.iduloge
+                    }
+                });
+                if (referent) {
+                    return true;
+                }
+                throw new Error('Zaposlenik nije referent nabave');
+            }
+
         }
 
 export {zaposlenikClass as Zaposlenik}

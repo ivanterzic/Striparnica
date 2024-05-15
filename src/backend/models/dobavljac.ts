@@ -12,7 +12,7 @@ const dobavljacClass =
         imevlasnika: string;
         prezimevlasnika: string;
         
-        constructor(id: number, ime: string, adresa: string, email: string, imevlasnika: string, prezimevlasnika: string) { 
+        private constructor(id: number, ime: string, adresa: string, email: string, imevlasnika: string, prezimevlasnika: string) { 
             this.iddobavljaca = id;
             this.ime = ime;
             this.adresa = adresa;
@@ -34,6 +34,7 @@ const dobavljacClass =
             });
             return result;
         }
+
 
     };
 

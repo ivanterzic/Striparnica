@@ -1,8 +1,6 @@
 
 import { Router } from 'express';
 import {NarudzbaController} from '../controllers/narudzbaController';
-import { narudzbaVallidation } from '../vallidation/NarudzbaVallidation';
-import { artiklVallidation } from '../vallidation/ArikalVallidation';
 
 const router = Router();
 
@@ -12,10 +10,10 @@ router.get('/statusi', NarudzbaController.apiDohvatiSveStatuseNarudzbi);
 router.get('/:id', NarudzbaController.apiDohvatiNarudzbu); 
 router.get('/', NarudzbaController.apiDohvatiSveNarudzbe); 
 
-router.post('/:id/urediartikle', artiklVallidation, NarudzbaController.apiUrediArtikleNarudzbe); 
-router.post('/', narudzbaVallidation, NarudzbaController.apiKreirajNarudzbu); 
+router.post('/:id/urediartikle', NarudzbaController.apiUrediArtikleNarudzbe); 
+router.post('/', NarudzbaController.apiKreirajNarudzbu); 
 
-router.put('/:id', narudzbaVallidation, NarudzbaController.apiAzurirajNarudzbu); 
+router.put('/:id', NarudzbaController.apiAzurirajNarudzbu); 
 
 router.delete('/:id', NarudzbaController.apiObrisiNarudzbu); 
 
