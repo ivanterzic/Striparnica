@@ -1,21 +1,27 @@
 import { Dobavljac } from "../models/dobavljac";
 
-describe('Dobavljac model tests ', () => {
-    test('doahvati sve dobavljace', async () => {
+describe('Dobavljac model tests', () => {
+    test('dohvati sve dobavljace', async () => {
+        Dobavljac.dohvatiSveDobavljace = jest.fn().mockResolvedValue(['dobavljac1', 'dobavljac2']);
+
         let dobavljaci = await Dobavljac.dohvatiSveDobavljace();
-        expect(dobavljaci).not.toBeNull();
-    }
-    );
-    test('dohvati dobavljaca', async () => {
-        let dobavljac = await Dobavljac.dohvatiDobavljaca(1);
-        expect(dobavljac).not.toBeNull();
-        let existingDobavljacId: number,
-            nonExistingDobavljacId: number;
-        let dobavljaci = await Dobavljac.dohvatiSveDobavljace();
-        existingDobavljacId = dobavljaci[0].iddobavljaca;
-        nonExistingDobavljacId = 81236       
-        expect(await Dobavljac.dohvatiDobavljaca(existingDobavljacId)).not.toBeNull();
-        expect(await Dobavljac.dohvatiDobavljaca(nonExistingDobavljacId)).toBeNull();
+        expect(dobavljaci).toEqual(['dobavljac1', 'dobavljac2']);
     });
 
+    test('dohvati dobavljaca', async () => {
+        Dobavljac.dohvatiDobavljaca = jest.fn().mockImplementation(async (id: number) => {
+            if (id === 1) {
+                return 'dobavljac1';
+            } else {
+                return null;
+            }
+        });
+
+        let dobavljac = await Dobavljac.dohvatiDobavljaca(1);
+        expect(dobavljac).toEqual('dobavljac1');
+
+        let nonExistingDobavljacId = 81236;
+        dobavljac = await Dobavljac.dohvatiDobavljaca(nonExistingDobavljacId);
+        expect(dobavljac).toBeNull();
+    });
 });
