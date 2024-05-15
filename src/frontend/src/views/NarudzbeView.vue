@@ -85,9 +85,6 @@ export default defineComponent({
         ocistiFilter() {
             this.filteredNarudzbe = [...this.narudzbe];
         },
-        // toggleModal() {
-        //     this.showModal = !this.showModal;
-        // },
     },
 });
 </script>

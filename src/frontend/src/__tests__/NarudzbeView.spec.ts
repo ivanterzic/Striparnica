@@ -1,7 +1,15 @@
-import { mount } from "@vue/test-utils";
+import fetchMock from "jest-fetch-mock";
+import { mount, flushPromises } from "@vue/test-utils";
 import NarudzbeView from "../views/NarudzbeView.vue";
+import { Narudzba } from "@/types/Narudzba";
 
-const narudzbe = [
+fetchMock.enableMocks();
+
+beforeEach(() => {
+    fetchMock.resetMocks();
+});
+
+const narudzbe: Narudzba[] = [
     {
         idnarudzbe: 1,
         datumstvaranja: "2024-05-10",
@@ -32,19 +40,34 @@ const mogucnosti = {
     narudzbe: [4, 5, 6],
 };
 
-it("fetches narudzbe successfully", async () => {
-    const wrapper = mount(NarudzbeView);
+describe("NarudzbeView.vue", () => {
+    it("Ispravan dohvat narudzbi i mogucnosti", async () => {
+        // Mock the fetch responses
+        fetchMock.mockResponses(JSON.stringify(narudzbe), JSON.stringify(mogucnosti));
 
-    await wrapper.setData({
-        narudzbe,
-        mogucnosti,
+        const wrapper = mount(NarudzbeView);
+
+        // Wait to ensure DOM updates have occurred
+        await flushPromises();
+
+        // Assert that the component has fetched and populated the data properties
+        expect(wrapper.vm.narudzbe).toEqual(narudzbe);
+        expect(wrapper.vm.mogucnosti).toEqual(mogucnosti);
     });
 
-    const searchInput = wrapper.findAll(".search-field")[0]; // Find input using data-testid
-    await searchInput.setValue("status"); // Simulate user input
-    const statusSelect = wrapper.findAll(".search-field")[1]; // Find input using data-testid
-    await statusSelect.setValue("potvrdena");
-    // console.log(wrapper.html());
-    const tableRows = wrapper.findAll("tbody tr"); // Adjust this selector based on your actual DOM structure
-    expect(tableRows.length).toBe(1);
+    it("Ispravno filtriranje narudzbi", async () => {
+        fetchMock.mockResponses(JSON.stringify(narudzbe), JSON.stringify(mogucnosti));
+
+        const wrapper = mount(NarudzbeView);
+
+        await flushPromises();
+
+        //console.log(wrapper.html());
+        const searchInput = wrapper.findAll(".search-field")[0];
+        await searchInput.setValue("status");
+        const statusSelect = wrapper.findAll(".search-field")[1];
+        await statusSelect.setValue("potvrdena");
+        const tableRows = wrapper.findAll("tbody tr");
+        expect(tableRows.length).toBe(1);
+    });
 });
