@@ -53,7 +53,7 @@ export default defineComponent({
                 { displayName: "Datum zaprimanja:", sqlName: "datumzaprimanja" },
                 { displayName: "Status:", sqlName: "status", plural: "statusi" },
                 { displayName: "Dobavljač:", sqlName: "iddobavljaca", plural: "dobavljaci" },
-                { displayName: "MBR referenta nabave:", sqlName: "mbrreferenta", plural: "mbrreferanata" },
+                { displayName: "MBR referenta nabave:", sqlName: "mbrreferenta", plural: "mbrreferenata" },
             ] as Zaglavlje[],
         };
     },

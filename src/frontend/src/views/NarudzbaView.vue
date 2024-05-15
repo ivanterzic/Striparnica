@@ -174,7 +174,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 .nav-button {
     display: inline-block;
     margin-top: 3vh;

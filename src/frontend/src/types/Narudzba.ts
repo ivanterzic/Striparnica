@@ -7,3 +7,11 @@ export type Narudzba = {
     mbrreferenta: string;
     [key: string]: any;
 };
+
+export type NarudzbaForm = {
+    datumstvaranja: string | null;
+    datumzaprimanja: string | null;
+    status: string;
+    iddobavljaca: number | null;
+    mbrreferenta: string;
+};

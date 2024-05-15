@@ -5,6 +5,18 @@
     </div>
 </template>
 
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
+    created() {
+        if (this.$route.path == "/") {
+            this.$router.push("/narudzbe");
+        }
+    },
+});
+</script>
+
 <style scoped>
 .not-found {
     text-align: center;
