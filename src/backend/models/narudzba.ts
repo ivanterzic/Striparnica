@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { Dobavljac } from './dobavljac';
 import { Artikal } from './artikal';
 import { Zaposlenik } from './zaposlenik';
+import e from 'express';
 const prisma = new PrismaClient();
 
 const statusiNarudzbe = ["potvrdena", "u tijeku", "nepotpuna"];
@@ -34,32 +35,36 @@ const narudzbaClass =
                 iddobavljaca: number,
                 mbrreferenta: string
             ) {
-                Narudzba.provjeriObaveznaPolja(datumstvaranja, status, mbrreferenta, iddobavljaca);
-                Narudzba.provjeriDatumStvaranja(datumstvaranja);
-                if (datumzaprimanja) {
-                    Narudzba.provjeriDatumZaprimanja(datumzaprimanja, datumstvaranja);
-                }
-                await Narudzba.provjeriDobavljaca(iddobavljaca);
-                await Zaposlenik.provjeriReferentaNabave(mbrreferenta);
-                Narudzba.provjeriStatus(status);
-
-                let result = await prisma.narudzba.create({
-                    data: {
-                        datumstvaranja: datumstvaranja,
-                        datumzaprimanja: datumzaprimanja,
-                        status: status,
-                        iddobavljaca: iddobavljaca,
-                        mbrreferenta: mbrreferenta
-
+                try {
+                    Narudzba.provjeriObaveznaPolja(datumstvaranja, status, mbrreferenta, iddobavljaca);
+                    Narudzba.provjeriDatumStvaranja(datumstvaranja);
+                    if (datumzaprimanja) {
+                        Narudzba.provjeriDatumZaprimanja(datumzaprimanja, datumstvaranja);
                     }
-                });
-                return {
-                    idnarudzbe: result.idnarudzbe,
-                    datumstvaranja: result.datumstvaranja ? result.datumstvaranja.toJSON().split('T')[0] : null,
-                    datumzaprimanja: result.datumzaprimanja ? result.datumzaprimanja.toJSON().split('T')[0] : null,
-                    status: result.status,
-                    iddobavljaca: result.iddobavljaca,
-                    mbrreferenta: result.mbrreferenta
+                    await Narudzba.provjeriDobavljaca(iddobavljaca);
+                    await Zaposlenik.provjeriReferentaNabave(mbrreferenta);
+                    Narudzba.provjeriStatus(status);
+    
+                    let result = await prisma.narudzba.create({
+                        data: {
+                            datumstvaranja: datumstvaranja,
+                            datumzaprimanja: datumzaprimanja,
+                            status: status,
+                            iddobavljaca: iddobavljaca,
+                            mbrreferenta: mbrreferenta
+                        }
+                    });
+                    return {
+                        idnarudzbe: result.idnarudzbe,
+                        datumstvaranja: result.datumstvaranja ? result.datumstvaranja.toJSON().split('T')[0] : null,
+                        datumzaprimanja: result.datumzaprimanja ? result.datumzaprimanja.toJSON().split('T')[0] : null,
+                        status: result.status,
+                        iddobavljaca: result.iddobavljaca,
+                        mbrreferenta: result.mbrreferenta
+                    }
+                }
+                catch (err) {
+                    throw err;
                 }
             }
 
@@ -82,40 +87,45 @@ const narudzbaClass =
             }   
     
             static async dohvatiNarudzbu(id: number) {
-                Narudzba.provjeriIdNarudzbe(id);
-                let result = await prisma.narudzba.findUnique({
-                    where: {
-                        idnarudzbe: id
-                    }
-                });
-                let artikli = await prisma.narudzbaartikli.findMany({
-                    where: {
-                        idnarudzbe: id
-                    }
-                });
-                let artikliProsireno = [];
-                for (let a of artikli) {
-                    let art = await prisma.artikal.findUnique({
+                try {
+                    await Narudzba.provjeriIdNarudzbe(id);
+                    let result = await prisma.narudzba.findUnique({
                         where: {
-                            idartikla: a.idartikla
+                            idnarudzbe: id
                         }
                     });
-                    artikliProsireno.push({
-                        ...art,
-                        kolicina: a.kolicina
+                    let artikli = await prisma.narudzbaartikli.findMany({
+                        where: {
+                            idnarudzbe: id
+                        }
                     });
+                    let artikliProsireno = [];
+                    for (let a of artikli) {
+                        let art = await prisma.artikal.findUnique({
+                            where: {
+                                idartikla: a.idartikla
+                            }
+                        });
+                        artikliProsireno.push({
+                            ...art,
+                            kolicina: a.kolicina
+                        });
+                    }
+                    return {
+                        narudzba : {
+                            idnarudzbe: result?.idnarudzbe,
+                            datumstvaranja: result?.datumstvaranja ? result?.datumstvaranja.toJSON().split('T')[0] : null,
+                            datumzaprimanja: result?.datumzaprimanja ? result?.datumzaprimanja.toJSON().split('T')[0] : null,
+                            status: result?.status,
+                            iddobavljaca: result?.iddobavljaca,
+                            mbrreferenta: result?.mbrreferenta
+                        
+                        },
+                        artikli : artikliProsireno
+                    }
                 }
-                return {
-                    narudzba : {
-                        idnarudzbe: result?.idnarudzbe,
-                        datumstvaranja: result?.datumstvaranja ? result?.datumstvaranja.toJSON().split('T')[0] : null,
-                        datumzaprimanja: result?.datumzaprimanja ? result?.datumzaprimanja.toJSON().split('T')[0] : null,
-                        status: result?.status,
-                        iddobavljaca: result?.iddobavljaca,
-                        mbrreferenta: result?.mbrreferenta
-                    
-                    },
-                    artikli : artikliProsireno
+                catch (err) {
+                    throw err;
                 }
             }
 
@@ -124,7 +134,8 @@ const narudzbaClass =
             }
 
             static async dohvatiPrviVeciID(id: number) {
-                Narudzba.provjeriIdNarudzbe(id);
+                try {
+                    Narudzba.provjeriIdNarudzbe(id);
                 let result = await prisma.narudzba.findFirst({
                     where: {
                         idnarudzbe: {
@@ -136,21 +147,30 @@ const narudzbaClass =
                     }
                 });
                 return result?.idnarudzbe;
+                } catch (err) {
+                    throw err;
+                }
+                
             }
 
             static async dohvatiPrviManjiID(id: number) {
-                Narudzba.provjeriIdNarudzbe(id);
-                let result = await prisma.narudzba.findFirst({
-                    where: {
-                        idnarudzbe: {
-                            lt: id
+                try{
+                    Narudzba.provjeriIdNarudzbe(id);
+                    let result = await prisma.narudzba.findFirst({
+                        where: {
+                            idnarudzbe: {
+                                lt: id
+                            }
+                        },
+                        orderBy: {
+                            idnarudzbe: 'desc'
                         }
-                    },
-                    orderBy: {
-                        idnarudzbe: 'desc'
-                    }
-                });
-                return result?.idnarudzbe;
+                    });
+                    return result?.idnarudzbe;
+                }
+                catch (err) {
+                    throw err;
+                }
             }
    
             static async azurirajNarudzbu(
@@ -161,86 +181,105 @@ const narudzbaClass =
                 iddobavljaca: number,
                 mbrreferenta: string
             ) {
-                Narudzba.provjeriIdNarudzbe(id);
-                Narudzba.provjeriObaveznaPolja(datumstvaranja, status, mbrreferenta, iddobavljaca);
-                Narudzba.provjeriDatumStvaranja(datumstvaranja);
-                if (datumzaprimanja) {
-                    Narudzba.provjeriDatumZaprimanja(datumzaprimanja, datumstvaranja);
-                }
-                await Narudzba.provjeriDobavljaca(iddobavljaca);
-                await Zaposlenik.provjeriReferentaNabave(mbrreferenta);
-                Narudzba.provjeriStatus(status);
-
-                let result = await prisma.narudzba.update({
-                    where: {
-                        idnarudzbe: id
-                    },
-                    data: {
-                        datumstvaranja: datumstvaranja,
-                        datumzaprimanja: datumzaprimanja,
-                        status: status,
-                        iddobavljaca: iddobavljaca,
-                        mbrreferenta: mbrreferenta
+                try {
+                    await Narudzba.provjeriIdNarudzbe(id);
+                    Narudzba.provjeriObaveznaPolja(datumstvaranja, status, mbrreferenta, iddobavljaca);
+                    Narudzba.provjeriDatumStvaranja(datumstvaranja);
+                    if (datumzaprimanja) {
+                        Narudzba.provjeriDatumZaprimanja(datumzaprimanja, datumstvaranja);
                     }
-                });
-                return {
-                    idnarudzbe: result.idnarudzbe,
-                    datumstvaranja: result.datumstvaranja ? result.datumstvaranja.toJSON().split('T')[0] : null,
-                    datumzaprimanja: result.datumzaprimanja ? result.datumzaprimanja.toJSON().split('T')[0] : null,
-                    status: result.status,
-                    iddobavljaca: result.iddobavljaca,
-                    mbrreferenta: result.mbrreferenta
-                };
+                    await Narudzba.provjeriDobavljaca(iddobavljaca);
+                    await Zaposlenik.provjeriReferentaNabave(mbrreferenta);
+                    Narudzba.provjeriStatus(status);
+
+                    let result = await prisma.narudzba.update({
+                        where: {
+                            idnarudzbe: id
+                        },
+                        data: {
+                            datumstvaranja: datumstvaranja,
+                            datumzaprimanja: datumzaprimanja,
+                            status: status,
+                            iddobavljaca: iddobavljaca,
+                            mbrreferenta: mbrreferenta
+                        }
+                    });
+                    return {
+                        idnarudzbe: result.idnarudzbe,
+                        datumstvaranja: result.datumstvaranja ? result.datumstvaranja.toJSON().split('T')[0] : null,
+                        datumzaprimanja: result.datumzaprimanja ? result.datumzaprimanja.toJSON().split('T')[0] : null,
+                        status: result.status,
+                        iddobavljaca: result.iddobavljaca,
+                        mbrreferenta: result.mbrreferenta
+                    }
+                }
+                catch (err) {
+                    throw err;
+                }
             }
 
             static async obrisiNarudzbu(id: number) {
-                Narudzba.provjeriIdNarudzbe(id);
-                let result2 = await prisma.narudzbaartikli.deleteMany({
-                    where: {
-                        idnarudzbe: id
-                    }
-                });
-                let result = await prisma.narudzba.delete({
-                    where: {
-                        idnarudzbe: id
-                    }
-                });
-                return result;
+                try {
+                    await Narudzba.provjeriIdNarudzbe(id);
+                    let result2 = await prisma.narudzbaartikli.deleteMany({
+                        where: {
+                            idnarudzbe: id
+                        }
+                    });
+                    let result = await prisma.narudzba.delete({
+                        where: {
+                            idnarudzbe: id
+                        }
+                    });
+                    return result;
+                }
+                catch (err) {
+                    throw err;
+                }
             }
 
             static async urediArtikleNarudzbe(id: number, artikli: Array<{
                 idartikla: number
                 kolicina: number
             }>) {
-                Narudzba.provjeriIdNarudzbe(id);
-                Narudzba.provjeriStavkeNarudzbe(artikli);
-                let narudzba = await prisma.narudzba.findUnique({
-                    where: {
-                        idnarudzbe: id
-                    }
-                });
-                for (let artikal of artikli) {
-                    let result = await prisma.artikal.findUnique({
+                try {
+                    console.log("tu")
+                    await Narudzba.provjeriIdNarudzbe(id);
+                    console.log("tu2")
+                    await Narudzba.provjeriStavkeNarudzbe(artikli);
+                    console.log("tu3")
+                    let narudzba = await prisma.narudzba.findUnique({
                         where: {
-                            idartikla: artikal.idartikla
+                            idnarudzbe: id
                         }
                     });
-                }
-                let result = await prisma.narudzbaartikli.deleteMany({
-                    where: {
-                        idnarudzbe: id
+                    for (let artikal of artikli) {
+                        let result = await prisma.artikal.findUnique({
+                            where: {
+                                idartikla: artikal.idartikla
+                            }
+                        });
                     }
-                });
-                let result2 = await prisma.narudzbaartikli.createMany({
-                    data: artikli.map((a) => {
-                        return {
-                            idnarudzbe: id,
-                            idartikla: a.idartikla,
-                            kolicina: a.kolicina
+                    let result = await prisma.narudzbaartikli.deleteMany({
+                        where: {
+                            idnarudzbe: id
                         }
-                    })
-                });
-                return result2;
+                    });
+                    let result2 = await prisma.narudzbaartikli.createMany({
+                        data: artikli.map((a) => {
+                            return {
+                                idnarudzbe: id,
+                                idartikla: a.idartikla,
+                                kolicina: a.kolicina
+                            }
+                        })
+                    });
+                    return result2;
+                }
+                catch (err) {
+                    throw err;
+                }
+                
             }
 
             static provjeriObaveznaPolja(datumstvaranja: Date, status: string, mbrreferenta: string, iddobavljaca: number) {
@@ -250,7 +289,7 @@ const narudzbaClass =
             }
 
 
-            static async provjeriDatumStvaranja(datumstvaranja: Date) {
+            static  provjeriDatumStvaranja(datumstvaranja: Date) {
                 if (isNaN(datumstvaranja.getTime())) {
                     throw 'Datum stvaranja nije validan datum.';
                 }
@@ -259,7 +298,7 @@ const narudzbaClass =
                 }
             }
 
-            static async provjeriDatumZaprimanja(datumzaprimanja: Date, datumstvaranja: Date) {
+            static provjeriDatumZaprimanja(datumzaprimanja: Date, datumstvaranja: Date) {
                 if (isNaN(datumzaprimanja.getTime())) {
                     throw 'Datum zaprimanja nije validan datum.';
                 }
@@ -269,63 +308,87 @@ const narudzbaClass =
             }
 
             static async provjeriDobavljaca(iddobavljaca: number) {
-                let dobavljaci = await Dobavljac.dohvatiSveDobavljace()
-                let dobavljaciID = dobavljaci.map((d) => d.iddobavljaca);
-                if (!dobavljaciID.includes(iddobavljaca)) {
-                    throw 'Id dobavljača nije među validnim dobavljačima.';
+                try {
+                    let dobavljaci = await Dobavljac.dohvatiSveDobavljace()
+                    let dobavljaciID = dobavljaci.map((d) => d.iddobavljaca);
+                    if (!dobavljaciID.includes(iddobavljaca)) {
+                        throw 'Id dobavljača nije među validnim dobavljačima.';
+                    }
                 }
+                catch (err) {
+                    throw err;
+                }
+                
             }
 
-            static async provjeriStatus(status: string) {
+            static provjeriStatus(status: string) {       
                 if (!statusiNarudzbe.includes(status)) {
                     throw 'Status nije među validnim statusima narudžbe.';
                 }
             }
 
             static async provjeriIdNarudzbe(id: number) {
-                let narudzbe = await Narudzba.dohvatiSveNarudzbe();
-                let narudzbeID = narudzbe.map((n) => n.idnarudzbe);
-                if (!narudzbeID.includes(id)) {
-                    throw 'Id narudžbe nije validan.';
+                try {
+                    if (isNaN(id)) {
+                        throw 'Id narudžbe mora biti broj.';
+                    }
+                    if (id <= 0) {
+                        throw 'Id narudžbe mora biti veći od 0.';
+                    }
+                    let narudzbe = await Narudzba.dohvatiSveNarudzbe();
+                    let narudzbeID = narudzbe.map((n) => n.idnarudzbe);
+                    if (!narudzbeID.includes(id)) {
+                        throw 'Id narudžbe nije validan.';
+                    }
                 }
+                catch (err) {
+                    throw err;
+                }
+                
             }
 
             static async provjeriStavkeNarudzbe(stavke: Array<{
                 idartikla: number
                 kolicina: number
             }>) {
-                if (!stavke) {
-                    throw 'Nedostaju stavke narudžbe.';
-                }
-                let artikli;
                 try {
-                    artikli = await Artikal.dohvatiSveArtikle();
+                    if (!stavke) {
+                        throw 'Nedostaju stavke narudžbe.';
+                    }
+                    let artikli;
+                    try {
+                        artikli = await Artikal.dohvatiSveArtikle();
+                    }
+                    catch (err) {
+                        throw 'Greška prilikom dohvaćanja artikala.';
+                    }
+                    let artikliID = artikli.map((a) => a.idartikla);
+                    let stavkenarudzbe
+                    try {
+                        stavkenarudzbe = typeof stavke === 'string' ? JSON.parse(stavke) : stavke;
+                    }
+                    catch (err) {
+                        throw 'Stavke narudžbe nisu u validnom formatu.';
+                    }
+                    for (let stavka of stavkenarudzbe) {
+                        if (!stavka.idartikla || stavka.kolicina == undefined || stavka.kolicina == null) {
+                            throw 'Nedostaju obavezna polja u stavci narudžbe.';
+                        }
+                        if (typeof stavka.kolicina != 'number') {
+                            throw 'Količina mora biti broj.';
+                        }
+                        if (stavka.kolicina <= 0) {
+                            throw 'Količina mora biti veća od 0.';
+                        }
+                        if (!artikliID.includes(stavka.idartikla)) {
+                            throw 'Id artikla nije među validnim artiklima.';
+                        }
+                    }
                 }
                 catch (err) {
-                    throw 'Greška prilikom dohvaćanja artikala.';
+                    throw err;
                 }
-                let artikliID = artikli.map((a) => a.idartikla);
-                let stavkenarudzbe
-                try {
-                    stavkenarudzbe = typeof stavke === 'string' ? JSON.parse(stavke) : stavke;
-                }
-                catch (err) {
-                    throw 'Stavke narudžbe nisu u validnom formatu.';
-                }
-                for (let stavka of stavkenarudzbe) {
-                    if (!stavka.idartikla || stavka.kolicina == undefined || stavka.kolicina == null) {
-                        throw 'Nedostaju obavezna polja u stavci narudžbe.';
-                    }
-                    if (typeof stavka.kolicina != 'number') {
-                        throw 'Količina mora biti broj.';
-                    }
-                    if (stavka.kolicina <= 0) {
-                        throw 'Količina mora biti veća od 0.';
-                    }
-                    if (!artikliID.includes(stavka.idartikla)) {
-                        throw 'Id artikla nije među validnim artiklima.';
-                    }
-                }
+                
 
             }
 

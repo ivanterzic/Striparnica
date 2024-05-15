@@ -38,12 +38,20 @@ const zaposlenikClass =
             }
 
             static async dohvatiZaposlenika(mbr: string) {
-                let zaposlenik = await prisma.zaposlenik.findUnique({
-                    where: {
-                        mbr: mbr
+                try {
+                    let zaposlenik = await prisma.zaposlenik.findUnique({
+                        where: {
+                            mbr: mbr
+                        }
+                    });
+                    if (!zaposlenik) {
+                        throw new Error('Zaposlenik ne postoji');
                     }
-                });
-                return zaposlenik;
+                    return zaposlenik;
+                }
+                catch (err) {
+                    throw err;
+                }
             }
     
             static async dohvatiZaposlenikaPoEmailu(email: string) {
@@ -79,21 +87,38 @@ const zaposlenikClass =
             }
 
             static async provjeriReferentaNabave(mbr: string) {
-                let referentId = await prisma.uloga.findUnique({
-                    where: {
-                        naziv: 'referent nabave'
+                let zaposlenik
+                try {
+                    zaposlenik = await prisma.zaposlenik.findUnique({
+                        where: {
+                            mbr: mbr
+                        }
+                    });
+                    if (!zaposlenik) {
+                        throw "Zaposlenik ne postoji!"
                     }
-                });
-                let referent = await prisma.zaposlenik.findFirst({
-                    where: {
-                        mbr: mbr,
-                        iduloge: referentId?.iduloge
-                    }
-                });
-                if (referent) {
-                    return true;
                 }
-                throw new Error('Zaposlenik nije referent nabave');
+                catch (err) {
+                    throw "Zaposlenik ne postoji!"
+                }
+                try {
+                    let referentId = await prisma.uloga.findUnique({
+                        where: {
+                            naziv: 'referent nabave'
+                        }
+                    });
+                    if (zaposlenik?.iduloge === referentId?.iduloge) {
+                        return true;
+                    }
+                    else {
+                        throw "Zaposlenik nije referent nabave!"
+                    }
+                }
+                catch (err) {
+                    throw err;
+                }
+                
+
             }
 
         }

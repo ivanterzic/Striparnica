@@ -17,7 +17,6 @@ export class NarudzbaController {
         try {
             let id = parseInt(req.params.id);
             let result = await Narudzba.dohvatiNarudzbu(id);
-
             let previousId = await Narudzba.dohvatiPrviManjiID(id);
             let nextId = await Narudzba.dohvatiPrviVeciID(id);
             res.json({
@@ -64,8 +63,9 @@ export class NarudzbaController {
     }
 
     static async apiKreirajNarudzbu(req : Request, res : Response){
-        let {datumstvaranja, datumzaprimanja} = await NarudzbaController.pretvoriDatume(req.body.datumstvaranja, req.body.datumzaprimanja);
         try {
+            let {datumstvaranja, datumzaprimanja} = await NarudzbaController.pretvoriDatume(req.body.datumstvaranja, req.body.datumzaprimanja);
+            req.body.iddobavljaca ? NarudzbaController.provjeriIdDobavljaca(req.body.iddobavljaca) : null;
             let result = await Narudzba.kreirajNarudzbu(
                 datumstvaranja,
                 datumzaprimanja,
@@ -83,6 +83,7 @@ export class NarudzbaController {
         try {
             let id = parseInt(req.params.id);
             let {datumstvaranja, datumzaprimanja} = await NarudzbaController.pretvoriDatume(req.body.datumstvaranja, req.body.datumzaprimanja);
+            req.body.iddobavljaca ? NarudzbaController.provjeriIdDobavljaca(req.body.iddobavljaca) : null;
             let result = await Narudzba.azurirajNarudzbu(
                 id,
                 datumstvaranja,
@@ -115,12 +116,18 @@ export class NarudzbaController {
                 kolicina: number;
             }> = [];
             if (typeof req.body.stavkenarudzbe === "string") {
-                for (let stavka of JSON.parse(req.body.stavkenarudzbe)) {
-                    artikli.push({
-                        idartikla: stavka.idartikla,
-                        kolicina: stavka.kolicina,
-                    });
+                try {
+                    for (let stavka of JSON.parse(req.body.stavkenarudzbe)) {
+                        artikli.push({
+                            idartikla: stavka.idartikla,
+                            kolicina: stavka.kolicina,
+                        });
+                    }
                 }
+                catch (err){
+                    throw "Stavke narudžbe nisu ispravno definirane!";
+                }
+                
             } else {
                 for (let stavka of req.body.stavkenarudzbe) {
                     artikli.push({
@@ -138,23 +145,39 @@ export class NarudzbaController {
 
     static async pretvoriDatume(datumstvaranja: string, datumzaprimanja: string){
         let datumstvaranjaDate = new Date(datumstvaranja);
-        
-        if (isNaN(datumstvaranjaDate.getTime())){
-            throw "Datum stvaranja nije ispravan!";
-        }
-        if (!datumzaprimanja || datumzaprimanja === "" || datumzaprimanja === null){
+        try {
+            if (datumstvaranja){
+                if (isNaN(datumstvaranjaDate.getTime())){
+                    throw "Datum stvaranja nije ispravan!";
+                }
+            }
+            else {
+                throw "Datum stvaranja je obavezan!";
+            }
+            
+            if (!datumzaprimanja || datumzaprimanja === "" || datumzaprimanja === null){
+                return {
+                    datumstvaranja: datumstvaranjaDate,
+                    datumzaprimanja: null
+                }
+            }
+            let datumzaprimanjaDate = new Date(datumzaprimanja);
+            if (isNaN(datumzaprimanjaDate.getTime())){
+                throw "Datum zaprimanja nije ispravan!";
+            }
             return {
                 datumstvaranja: datumstvaranjaDate,
-                datumzaprimanja: null
+                datumzaprimanja: datumzaprimanjaDate
             }
+        } catch (err){
+            throw err;
         }
-        let datumzaprimanjaDate = new Date(datumzaprimanja);
-        if (isNaN(datumzaprimanjaDate.getTime())){
-            throw "Datum zaprimanja nije ispravan!";
-        }
-        return {
-            datumstvaranja: datumstvaranjaDate,
-            datumzaprimanja: datumzaprimanjaDate
+
+        
+    }
+    static  provjeriIdDobavljaca(id: string){
+        if (!/^[0-9]+$/.test(id)) {
+            throw "ID dobavljača mora biti broj!";
         }
     }
 }
