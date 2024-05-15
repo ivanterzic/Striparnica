@@ -69,16 +69,15 @@ export class NarudzbaController{
     }
 
     static async apiKreirajNarudzbu(req : Request, res : Response){
+        let {datumstvaranja, datumzaprimanja} = await NarudzbaController.pretvoriDatume(req.body.datumstvaranja, req.body.datumzaprimanja);
         try {
-            let narudzba = new Narudzba(
-                0,
-                req.body.datumstvaranja,
-                req.body.datumzaprimanja = "" ? null : req.body.datumzaprimanja,
+            let result = await Narudzba.kreirajNarudzbu(
+                datumstvaranja,
+                datumzaprimanja,
                 req.body.status,
                 parseInt(req.body.iddobavljaca),
                 req.body.mbrreferenta
-            );
-            let result = await Narudzba.kreirajNarudzbu(narudzba);
+            )
             res.json(result);
         }
         catch (err) {
@@ -88,15 +87,16 @@ export class NarudzbaController{
 
     static async apiAzurirajNarudzbu(req : Request, res : Response){
         try {
-            let narudzba = new Narudzba(
-                0,
-                req.body.datumstvaranja,
-                req.body.datumzaprimanja = "" ? null : req.body.datumzaprimanja,
+            let id = parseInt(req.params.id);
+            let {datumstvaranja, datumzaprimanja} = await NarudzbaController.pretvoriDatume(req.body.datumstvaranja, req.body.datumzaprimanja);
+            let result = await Narudzba.azurirajNarudzbu(
+                id,
+                datumstvaranja,
+                datumzaprimanja,
                 req.body.status,
                 parseInt(req.body.iddobavljaca),
                 req.body.mbrreferenta
-            );
-            let result = await Narudzba.azurirajNarudzbu(parseInt(req.params.id), narudzba);
+            )
             res.json(result);
         }
         catch (err) {
@@ -143,6 +143,28 @@ export class NarudzbaController{
         }
         catch (err) {
             res.status(400).json({ error: err });
+        }
+    }
+
+    static async pretvoriDatume(datumstvaranja: string, datumzaprimanja: string){
+        let datumstvaranjaDate = new Date(datumstvaranja);
+        
+        if (isNaN(datumstvaranjaDate.getTime())){
+            throw "Datum stvaranja nije ispravan!";
+        }
+        if (!datumzaprimanja || datumzaprimanja === "" || datumzaprimanja === null){
+            return {
+                datumstvaranja: datumstvaranjaDate,
+                datumzaprimanja: null
+            }
+        }
+        let datumzaprimanjaDate = new Date(datumzaprimanja);
+        if (isNaN(datumzaprimanjaDate.getTime())){
+            throw "Datum zaprimanja nije ispravan!";
+        }
+        return {
+            datumstvaranja: datumstvaranjaDate,
+            datumzaprimanja: datumzaprimanjaDate
         }
     }
 }

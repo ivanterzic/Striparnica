@@ -13,7 +13,7 @@ const artikalClass =
         izdavac: string;
         izdanje: string;
 
-        constructor(id: number, naziv: string, opis: string, dostupnakolicina: number, cijena: number, pdv: number, izdavac: string, izdanje: string) {
+        private constructor(id: number, naziv: string, opis: string, dostupnakolicina: number, cijena: number, pdv: number, izdavac: string, izdanje: string) {
             this.idartikla = id;
             this.naziv = naziv;
             this.opis = opis;
@@ -37,6 +37,9 @@ const artikalClass =
             });
             return artikal;
         }
+
+        
+
     }
 
 export { artikalClass as Artikal };
