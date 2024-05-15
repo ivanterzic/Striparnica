@@ -115,28 +115,7 @@ export class NarudzbaController {
                 idartikla: number;
                 kolicina: number;
             }> = [];
-            if (typeof req.body.stavkenarudzbe === "string") {
-                try {
-                    for (let stavka of JSON.parse(req.body.stavkenarudzbe)) {
-                        artikli.push({
-                            idartikla: stavka.idartikla,
-                            kolicina: stavka.kolicina,
-                        });
-                    }
-                }
-                catch (err){
-                    throw "Stavke narudžbe nisu ispravno definirane!";
-                }
-                
-            } else {
-                for (let stavka of req.body.stavkenarudzbe) {
-                    artikli.push({
-                        idartikla: stavka.idartikla,
-                        kolicina: stavka.kolicina,
-                    });
-                }
-            }
-            let result = await Narudzba.urediArtikleNarudzbe(id, artikli);
+            let result = await Narudzba.urediArtikleNarudzbe(id, req.body.stavkenarudzbe);
             res.json(result);
         } catch (err) {
             res.status(400).json({ error: err });

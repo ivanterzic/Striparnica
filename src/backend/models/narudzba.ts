@@ -17,6 +17,7 @@ const narudzbaClass =
             status: string;
             mbrreferenta: string;
             iddobavljaca: number;
+            static idnarudzbe: number | undefined;
             
             private constructor(id: number, datumstvaranja: Date, datumzaprimanja: Date | null, status: string, iddobavljaca: number, mbrreferenta: string) { 
                 this.idnarudzbe = id;
@@ -29,14 +30,17 @@ const narudzbaClass =
 
             
             static async kreirajNarudzbu(
-                datumstvaranja: Date,
+                datumstvaranja: Date | undefined,
                 datumzaprimanja: Date | null,
-                status: string,
-                iddobavljaca: number,
-                mbrreferenta: string
+                status: string | undefined,
+                iddobavljaca: number | undefined,
+                mbrreferenta: string | undefined
             ) {
                 try {
                     Narudzba.provjeriObaveznaPolja(datumstvaranja, status, mbrreferenta, iddobavljaca);
+                    if (!datumstvaranja || !status || !mbrreferenta || !iddobavljaca) {
+                        throw 'Nedostaju obavezna polja.';
+                    }
                     Narudzba.provjeriDatumStvaranja(datumstvaranja);
                     if (datumzaprimanja) {
                         Narudzba.provjeriDatumZaprimanja(datumzaprimanja, datumstvaranja);
@@ -174,15 +178,18 @@ const narudzbaClass =
             }
    
             static async azurirajNarudzbu(
-                id : number,
-                datumstvaranja: Date,
-                datumzaprimanja: Date | null,
-                status: string,
-                iddobavljaca: number,
-                mbrreferenta: string
+                id : number | undefined,
+                datumstvaranja: Date | undefined,
+                datumzaprimanja: Date | null | undefined,
+                status: string | undefined,
+                iddobavljaca: number | undefined,
+                mbrreferenta: string | undefined
             ) {
                 try {
                     await Narudzba.provjeriIdNarudzbe(id);
+                    if (!datumstvaranja || !status || !mbrreferenta || !iddobavljaca) {
+                        throw 'Nedostaju obavezna polja.';
+                    }
                     Narudzba.provjeriObaveznaPolja(datumstvaranja, status, mbrreferenta, iddobavljaca);
                     Narudzba.provjeriDatumStvaranja(datumstvaranja);
                     if (datumzaprimanja) {
@@ -243,11 +250,12 @@ const narudzbaClass =
                 kolicina: number
             }>) {
                 try {
-                    console.log("tu")
                     await Narudzba.provjeriIdNarudzbe(id);
-                    console.log("tu2")
+                    if (!artikli) {
+                        throw 'Nedostaju stavke narudžbe.';
+                    }
                     await Narudzba.provjeriStavkeNarudzbe(artikli);
-                    console.log("tu3")
+
                     let narudzba = await prisma.narudzba.findUnique({
                         where: {
                             idnarudzbe: id
@@ -282,7 +290,7 @@ const narudzbaClass =
                 
             }
 
-            static provjeriObaveznaPolja(datumstvaranja: Date, status: string, mbrreferenta: string, iddobavljaca: number) {
+            static provjeriObaveznaPolja(datumstvaranja: Date | undefined, status: string | undefined, mbrreferenta: string | undefined, iddobavljaca: number | undefined){
                 if (!datumstvaranja || !status || !mbrreferenta || !iddobavljaca) {
                     throw 'Nedostaju obavezna polja.';
                 }
@@ -327,13 +335,22 @@ const narudzbaClass =
                 }
             }
 
-            static async provjeriIdNarudzbe(id: number) {
+            static async provjeriIdNarudzbe(id: number | undefined) {
                 try {
+                    if (id == 0){
+                        throw 'Id narudžbe ne može biti 0.';
+                    }
+                    if (!id || id == undefined) {
+                        throw 'Nedostaje id narudžbe.';
+                    }
                     if (isNaN(id)) {
                         throw 'Id narudžbe mora biti broj.';
                     }
                     if (id <= 0) {
                         throw 'Id narudžbe mora biti veći od 0.';
+                    }
+                    if (id % 1 != 0) {
+                        throw 'Id narudžbe mora biti cijeli broj.';
                     }
                     let narudzbe = await Narudzba.dohvatiSveNarudzbe();
                     let narudzbeID = narudzbe.map((n) => n.idnarudzbe);
@@ -350,25 +367,29 @@ const narudzbaClass =
             static async provjeriStavkeNarudzbe(stavke: Array<{
                 idartikla: number
                 kolicina: number
-            }>) {
+            }> | undefined | Array<any> | string) {
                 try {
                     if (!stavke) {
                         throw 'Nedostaju stavke narudžbe.';
                     }
-                    let artikli;
+                    let artikli, artikliID;
                     try {
                         artikli = await Artikal.dohvatiSveArtikle();
+                        artikliID = artikli.map((a) => a.idartikla)
                     }
                     catch (err) {
                         throw 'Greška prilikom dohvaćanja artikala.';
                     }
-                    let artikliID = artikli.map((a) => a.idartikla);
+                ;
                     let stavkenarudzbe
                     try {
                         stavkenarudzbe = typeof stavke === 'string' ? JSON.parse(stavke) : stavke;
+                        if (!Array.isArray(stavkenarudzbe)) {
+                            throw 'Stavke narudžbe nisu u validnom formatu.';
+                        }
                     }
                     catch (err) {
-                        throw 'Stavke narudžbe nisu u validnom formatu.';
+                        throw err;
                     }
                     for (let stavka of stavkenarudzbe) {
                         if (!stavka.idartikla || stavka.kolicina == undefined || stavka.kolicina == null) {
@@ -388,10 +409,7 @@ const narudzbaClass =
                 catch (err) {
                     throw err;
                 }
-                
-
             }
-
     };
 
 export { narudzbaClass as Narudzba };
