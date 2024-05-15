@@ -1,41 +1,44 @@
 <template>
     <div>
-        <div
-            class="form-button nav-button back-blue"
-            @click="dohvatiNarudzbu(prethodnaURL, prethodnaNarudzba)"
-            :class="{ disabled: !prethodnaNarudzba }"
-        >
-            Prethodna
+        <h2 v-if="error">{{ error }}. <router-link to="/narudzbe">Povratak na listu narudžbi</router-link></h2>
+        <div v-else>
+            <div
+                class="form-button nav-button back-blue"
+                @click="susjednaNarudzba(prethodnaURL, prethodnaNarudzba)"
+                :class="{ disabled: !prethodnaNarudzba }"
+            >
+                Prethodna
+            </div>
+            <div
+                class="form-button nav-button back-blue"
+                @click="susjednaNarudzba(sljedecaURL, sljedecaNarudzba)"
+                :class="{ disabled: !sljedecaNarudzba }"
+            >
+                Sljedeća
+            </div>
+            <NarudzbaForm
+                v-if="narudzba && mogucnosti"
+                :narudzba="narudzba"
+                :mogucnosti="mogucnosti"
+                @refresh="dohvatiNarudzbu(narudzbaURL, id)"
+            />
+            <h2>Lista artikala</h2>
+            <Table
+                v-if="artikli.length"
+                :zaglavlja="zaglavlja"
+                :retci="artikli"
+                :content="'artikli'"
+                :id="narudzba.idnarudzbe"
+                @refresh="dohvatiNarudzbu(narudzbaURL, id)"
+            />
+            <ArtikalForm
+                :showModal="showModal"
+                :sviArtikli="sviArtikli"
+                @close="showModal = false"
+                @novi-artikal="dodajArtikal"
+            />
+            <div class="form-button nav-button back-blue margin-bottom" @click="toggleModal">Dodaj artikal</div>
         </div>
-        <div
-            class="form-button nav-button back-blue"
-            @click="dohvatiNarudzbu(sljedecaURL, sljedecaNarudzba)"
-            :class="{ disabled: !sljedecaNarudzba }"
-        >
-            Sljedeća
-        </div>
-        <NarudzbaForm
-            v-if="narudzba && mogucnosti"
-            :narudzba="narudzba"
-            :mogucnosti="mogucnosti"
-            @refresh="dohvatiNarudzbu(narudzbaURL, id)"
-        />
-        <h2>Lista artikala</h2>
-        <Table
-            v-if="artikli.length"
-            :zaglavlja="zaglavlja"
-            :retci="artikli"
-            :content="'artikli'"
-            :id="narudzba.idnarudzbe"
-            @refresh="dohvatiNarudzbu(narudzbaURL, id)"
-        />
-        <ArtikalForm
-            :showModal="showModal"
-            :sviArtikli="sviArtikli"
-            @close="showModal = false"
-            @novi-artikal="dodajArtikal"
-        />
-        <div class="form-button nav-button back-blue margin-bottom" @click="toggleModal">Dodaj artikal</div>
     </div>
 </template>
 
@@ -78,6 +81,7 @@ export default defineComponent({
             ] as Zaglavlje[],
             showModal: false,
             sviArtikli: [] as Artikal[],
+            error: "",
         };
     },
     mounted() {
@@ -103,15 +107,17 @@ export default defineComponent({
             if (!id) return;
             try {
                 let response = await fetch(url);
-                if (!response.ok) {
+                if (response.ok) {
+                    let data = await response.json();
+                    this.narudzba = data.narudzba;
+                    this.artikli = data.artikli;
+                    this.prethodnaNarudzba = data.previousId;
+                    this.sljedecaNarudzba = data.nextId;
+                } else if (response.status === 400) {
+                    this.error = (await response.json()).error;
+                } else {
                     throw new Error("Greška kod dohvaćanja narudžbe");
                 }
-                let data = await response.json();
-                this.narudzba = data.narudzba;
-                this.artikli = data.artikli;
-                this.prethodnaNarudzba = data.previousId;
-                this.sljedecaNarudzba = data.nextId;
-                this.$router.push(`/narudzbe/${id}`);
             } catch (error) {
                 console.log(error);
             }
@@ -169,6 +175,11 @@ export default defineComponent({
             } catch (error) {
                 console.log(error);
             }
+        },
+        susjednaNarudzba(url: string, id: string | number) {
+            if (!id) return;
+            this.$router.push(`/narudzbe/${id}`);
+            this.dohvatiNarudzbu(url, id);
         },
     },
 });
