@@ -75,7 +75,7 @@ export class NarudzbaController {
             )
             res.status(200).json(result);
         } catch (err) {
-            res.status(400).json({ error: err });
+            err ? res.status(400).json({ error: err }) : res.status(400).json({ error: "Greška prilikom kreiranja narudžbe!" });
         }
     }
 
@@ -94,7 +94,7 @@ export class NarudzbaController {
             )
             res.status(200).json(result);
         } catch (err) {
-            res.status(400).json({ error: err });
+            err ? res.status(400).json({ error: err }) : res.status(400).json({ error: "Greška prilikom kreiranja narudžbe!" });
         }
     }
 
@@ -104,7 +104,7 @@ export class NarudzbaController {
             let result = await Narudzba.obrisiNarudzbu(id);
             res.status(200).json(result);
         } catch (err) {
-            res.status(400).json({ error: err });
+            err ? res.status(400).json({ error: err }) : res.status(400).json({ error: "Greška prilikom kreiranja narudžbe!" });
         }
     }
 
@@ -118,7 +118,7 @@ export class NarudzbaController {
             let result = await Narudzba.urediArtikleNarudzbe(id, req.body.stavkenarudzbe);
             res.status(200).json(result);
         } catch (err) {
-            res.status(400).json({ error: err });
+            err ? res.status(400).json({ error: err }) : res.status(400).json({ error: "Greška prilikom kreiranja narudžbe!" });
         }
     }
 

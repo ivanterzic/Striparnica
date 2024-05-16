@@ -3,9 +3,23 @@ import {Dobavljac} from '../models/dobavljac';
 import { Artikal } from '../models/artikal';
 import { Zaposlenik } from '../models/zaposlenik';
 
-
-
 describe('Narudzba model tests', () => {
+
+    jest.mock("../models/narudzba", () => ({
+        Narudzba: {
+            dohvatiSveNarudzbe: jest.fn().mockResolvedValue([{ idnarudzbe: 1, status: "potvrdena" }, { idnarudzbe: 2, status: "u tijeku" }]),
+            dohvatiNarudzbu: jest.fn(),
+            dohvatiPrviManjiID: jest.fn(),
+            dohvatiPrviVeciID: jest.fn(),
+            dohvatiSveStatuseNarudzbi: jest.fn().mockResolvedValue(["potvrdena", "u tijeku"]),
+            kreirajNarudzbu: jest.fn(),
+            azurirajNarudzbu: jest.fn(),
+            obrisiNarudzbu: jest.fn(),
+            urediArtikleNarudzbe: jest.fn(),
+        },
+    }));
+    
+
     test('provjeriObaveznaPolja', () => {
         // Datum, status, mbrreferenta i iddobavljaca su obavezna polja
         expect(() => Narudzba.provjeriObaveznaPolja(new Date(), 'potvrdena', '12345678901', 1)).not.toThrow();
@@ -78,30 +92,28 @@ describe('Narudzba model tests', () => {
         expect(await Narudzba.dohvatiPrviManjiID(idnarudzbe)).toBeLessThan(idnarudzbe);
     }
     );
+
     test('kreirajNarudzbu', async () => {
         let datumstvaranja = new Date();
         let datumzaprimanja = new Date();
         let status = 'potvrdena';
         let dob = await Dobavljac.dohvatiSveDobavljace()
-        let iddobavljaca = dob[0].iddobavljaca
+        let iddobavljaca = dob[0].iddobavljaca;
         let ref = await Zaposlenik.dohvatiSveReferenteNabave()
         let mbrreferenta = ref[0].mbr;
-        expect(()=> Narudzba.kreirajNarudzbu(datumstvaranja, datumzaprimanja, status, iddobavljaca, mbrreferenta)).not.toThrow();
         expect(await Narudzba.kreirajNarudzbu(datumstvaranja, datumzaprimanja, status, iddobavljaca, mbrreferenta)).toEqual({
+            idnarudzbe: expect.any(Number),
             datumstvaranja: expect.any(String),
             datumzaprimanja: expect.any(String),
             status: status,
             iddobavljaca: iddobavljaca,
-            mbrreferenta: mbrreferenta,
-            idnarudzbe: expect.any(Number)
+            mbrreferenta: mbrreferenta
         });
-        
-        expect(()=> Narudzba.kreirajNarudzbu(undefined, datumzaprimanja, status, iddobavljaca, mbrreferenta)).toThrow;
-        expect(()=> Narudzba.kreirajNarudzbu(datumstvaranja, datumzaprimanja, undefined, iddobavljaca, mbrreferenta)).toThrow;
-        expect(()=> Narudzba.kreirajNarudzbu(datumstvaranja, datumzaprimanja, status, iddobavljaca, undefined)).toThrow;
-        expect(()=> Narudzba.kreirajNarudzbu(datumstvaranja, datumzaprimanja, status, iddobavljaca, undefined)).toThrow;
-        expect(()=> Narudzba.kreirajNarudzbu(datumstvaranja, datumzaprimanja, status, undefined, mbrreferenta)).toThrow;
-
+        expect(() => Narudzba.kreirajNarudzbu(undefined, datumzaprimanja, status, iddobavljaca, mbrreferenta)).toThrow
+        expect(() => Narudzba.kreirajNarudzbu(datumstvaranja, null, status, iddobavljaca, mbrreferenta)).toThrow
+        expect(() => Narudzba.kreirajNarudzbu(datumstvaranja, datumzaprimanja, undefined, iddobavljaca, mbrreferenta)).toThrow
+        expect(() => Narudzba.kreirajNarudzbu(datumstvaranja, datumzaprimanja, status, undefined, mbrreferenta)).toThrow
+        expect(() => Narudzba.kreirajNarudzbu(datumstvaranja, datumzaprimanja, status, iddobavljaca, undefined)).toThrow    
     });
     test('dohvatiSveNarudzbe', async () => {
         expect(await Narudzba.dohvatiSveNarudzbe()).toEqual(expect.any(Array));

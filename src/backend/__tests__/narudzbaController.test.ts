@@ -1,10 +1,10 @@
 import { Narudzba } from "../models/narudzba";
 import { NarudzbaController } from "../controllers/narudzbaController";
 
-// mock
 jest.mock("../models/narudzba", () => ({
     Narudzba: {
-        dohvatiSveNarudzbe: jest.fn().mockResolvedValue([{ idnarudzbe: 1, status: "potvrdena" }, { idnarudzbe: 2, status: "u tijeku" }]),
+        dohvatiSveNarudzbe: jest.fn().mockResolvedValue([{ idnarudzbe: 1, status: "potvrdena" }, { idnarudzbe: 2, status: "u tijeku" }],
+        ),
         dohvatiNarudzbu: jest.fn(),
         dohvatiPrviManjiID: jest.fn(),
         dohvatiPrviVeciID: jest.fn(),
@@ -87,9 +87,9 @@ describe('Narudzba controller tests', () => {
                 mbrreferenta: '1',
             }
         };
-        const res = { json: jest.fn(), status: jest.fn() };
+        const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
         await NarudzbaController.apiKreirajNarudzbu(req as any, res as any);
-        expect(res.json).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(200);
     });
 
     it('apiAzurirajNarudzbu', async () => {
@@ -98,23 +98,23 @@ describe('Narudzba controller tests', () => {
             body: {
                 datumstvaranja: "2021-01-01",
                 datumzaprimanja: "2021-01-02",
-                status: "Kreirana",
+                status: "potvrdena",
                 iddobavljaca: 1,
                 mbrreferenta: '1',
             }
         };
-        const res = { json: jest.fn(), status: jest.fn() };
+        const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
         await NarudzbaController.apiAzurirajNarudzbu(req as any, res as any);
-        expect(res.json).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(200);
     });
 
     it('apiObrisiNarudzbu', async () => {
         const req = {
             params: { id: '1' },
         };
-        const res = { json: jest.fn(), status: jest.fn() };
+        const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
         await NarudzbaController.apiObrisiNarudzbu(req as any, res as any);
-        expect(res.json).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(200);
     });
 
     it('apiUrediArtikleNarudzbe', async () => {
@@ -127,9 +127,9 @@ describe('Narudzba controller tests', () => {
                 ]
             }
         };
-        const res = { json: jest.fn(), status: jest.fn() };
+        const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
         await NarudzbaController.apiUrediArtikleNarudzbe(req as any, res as any);
-        expect(res.json).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(200);
     });
 
     it('pretvoriDatume', async () => {
