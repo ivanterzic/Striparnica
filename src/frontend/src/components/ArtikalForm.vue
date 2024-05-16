@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="element">
                 <label>Naziv artikla:</label>
-                <select @change="fillModal" v-model="idartikla">
+                <select @change="fillModal" v-model="idartikla" id="naziv-artikla">
                     <option v-for="artikal in sviArtikli" :key="artikal" :value="artikal.idartikla">
                         ID: {{ artikal.idartikla }} - {{ artikal.naziv }}
                     </option>

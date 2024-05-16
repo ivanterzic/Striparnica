@@ -37,7 +37,9 @@
                 @close="showModal = false"
                 @novi-artikal="dodajArtikal"
             />
-            <div class="form-button nav-button back-blue margin-bottom" @click="toggleModal">Dodaj artikal</div>
+            <div id="toggle-artikal-div" class="form-button nav-button back-blue margin-bottom" @click="toggleModal">
+                Dodaj artikal
+            </div>
         </div>
     </div>
 </template>
