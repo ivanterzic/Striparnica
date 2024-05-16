@@ -5,7 +5,8 @@
   "main": "server.ts",
   "scripts": {
     "test": "jest",
-    "start": "ts-node server.ts"
+    "start": "ts-node server.ts",
+    "test:integration": "jest __tests__/integration_tests"
   },
   "author": "",
   "license": "ISC",
@@ -36,8 +37,8 @@
       "^.+\\.(ts|tsx)$": "ts-jest"
     },
     "testMatch": [
-      "**/__tests__/*.+(ts|tsx|js)"
+      "**/__tests__/*.+(ts|tsx|js)",
+      "**/?(*.)+(spec|test).+(ts|tsx|js)"
     ]
   }
-  
 }

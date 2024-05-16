@@ -18,6 +18,10 @@ export class DobavljacController{
         try {
             let id = parseInt(req.params.id);
             let dobavljac = await Dobavljac.dohvatiDobavljaca(id);
+            if (!dobavljac) {
+                res.status(400).json({error: "Dobavljac nije pronađen."});
+                return;
+            }
             res.json(dobavljac);
         }
         catch (err) {

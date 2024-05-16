@@ -73,7 +73,7 @@ export class NarudzbaController {
                 parseInt(req.body.iddobavljaca),
                 req.body.mbrreferenta
             )
-            res.json(result);
+            res.status(200).json(result);
         } catch (err) {
             res.status(400).json({ error: err });
         }
@@ -92,7 +92,7 @@ export class NarudzbaController {
                 parseInt(req.body.iddobavljaca),
                 req.body.mbrreferenta
             )
-            res.json(result);
+            res.status(200).json(result);
         } catch (err) {
             res.status(400).json({ error: err });
         }
@@ -102,7 +102,7 @@ export class NarudzbaController {
         try {
             let id = parseInt(req.params.id);
             let result = await Narudzba.obrisiNarudzbu(id);
-            res.json(result);
+            res.status(200).json(result);
         } catch (err) {
             res.status(400).json({ error: err });
         }
@@ -116,7 +116,7 @@ export class NarudzbaController {
                 kolicina: number;
             }> = [];
             let result = await Narudzba.urediArtikleNarudzbe(id, req.body.stavkenarudzbe);
-            res.json(result);
+            res.status(200).json(result);
         } catch (err) {
             res.status(400).json({ error: err });
         }

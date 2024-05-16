@@ -7,6 +7,10 @@ export class ArtikalController{
         try {
             let id = parseInt(req.params.id);
             let artikal = await Artikal.dohvatiArtikal(id);
+            if (!artikal) {
+                res.status(400).json({error: "Artikal nije pronađen."});
+                return;
+            }
             res.json(artikal);
         }
         catch (err) {
