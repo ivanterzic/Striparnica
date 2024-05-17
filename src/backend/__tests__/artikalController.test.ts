@@ -11,7 +11,7 @@ jest.mock("../models/artikal", () => ({
     },
 }));
 
-//
+
 describe('Artikal controller tests', () => {
     it('apiDohvatiArtikal', async () => {
         Artikal.dohvatiArtikal = jest.fn().mockResolvedValueOnce({ idartikla: 1, name: "Artikal 1" });

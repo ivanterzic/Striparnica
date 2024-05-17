@@ -23,7 +23,6 @@ describe('Artikal model tests', () => {
         Artikal.dohvatiArtikal = jest.fn().mockResolvedValueOnce({ idartikla: 1, name: "Artikal 1" });
         let artikal = await Artikal.dohvatiArtikal(1);
         expect(artikal).toEqual({ idartikla: 1, name: "Artikal 1" });
-
         let nonExistingArtikalId = 81236;
         artikal = await Artikal.dohvatiArtikal(nonExistingArtikalId);
         expect(artikal).toBeUndefined

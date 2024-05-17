@@ -8,8 +8,9 @@ jest.mock("../models/dobavljac", () => ({
     },
 }));
 
-//
+
 describe('Dobavljac controller tests', () => {
+
     it('apiDohvatiDobavljaca', async () => {
         Dobavljac.dohvatiDobavljaca = jest.fn().mockResolvedValueOnce({ iddobavljaca: 1, name: "Dobavljac 1" });
         let req = { params: { id: 1 } };
@@ -17,6 +18,7 @@ describe('Dobavljac controller tests', () => {
         await DobavljacController.apiDohvatiDobavljaca(req as any, res as any);
         expect(res.json).toHaveBeenCalledWith({ iddobavljaca: 1, name: "Dobavljac 1" });
     });
+
     it('apiDohvatiSveDobavljace', async () => {
         const req = {};
         const res = { json: jest.fn() };
@@ -26,6 +28,7 @@ describe('Dobavljac controller tests', () => {
             { iddobavljaca: 2, name: "Dobavljac 2" },
         ]);
     }
+    
     );
     it('apiDohvatiSveId', async () => {
         const req = {};

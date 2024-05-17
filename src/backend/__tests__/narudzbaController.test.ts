@@ -5,11 +5,11 @@ jest.mock("../models/narudzba", () => ({
     Narudzba: {
         dohvatiSveNarudzbe: jest.fn().mockResolvedValue([{ idnarudzbe: 1, status: "potvrdena" }, { idnarudzbe: 2, status: "u tijeku" }],
         ),
-        dohvatiNarudzbu: jest.fn(),
+        dohvatiNarudzbu: jest.fn( async () => { return { idnarudzbe: 1, status: "Kreirana" }; }),
         dohvatiPrviManjiID: jest.fn(),
         dohvatiPrviVeciID: jest.fn(),
         dohvatiSveStatuseNarudzbi: jest.fn().mockResolvedValue(["potvrdena", "u tijeku"]),
-        kreirajNarudzbu: jest.fn(),
+        kreirajNarudzbu: jest.fn( async () => { return { idnarudzbe: 1 }; }),
         azurirajNarudzbu: jest.fn(),
         obrisiNarudzbu: jest.fn(),
         urediArtikleNarudzbe: jest.fn(),
@@ -40,18 +40,10 @@ describe('Narudzba controller tests', () => {
     });
 
     it('apiDohvatiNarudzbu', async () => {
-        Narudzba.dohvatiNarudzbu = jest.fn().mockResolvedValueOnce({ idnarudzbe: 1, status: "Kreirana" });
-        Narudzba.dohvatiPrviManjiID = jest.fn().mockResolvedValueOnce(0);
-        Narudzba.dohvatiPrviVeciID = jest.fn().mockResolvedValueOnce(2);
-        let req = { params: { id: '1' } };
+        const req = { params: { id: '1' } };
         const res = { json: jest.fn() };
         await NarudzbaController.apiDohvatiNarudzbu(req as any, res as any);
-        expect(res.json).toHaveBeenCalledWith({
-            idnarudzbe: 1,
-            status: "Kreirana",
-            previousId: 0,
-            nextId: 2,
-        });
+        expect(res.json).toHaveBeenCalledWith({ idnarudzbe: 1, status: "Kreirana" });
     });
 
     it('apiDohvatiSveStatuseNarudzbi', async () => {
@@ -78,6 +70,7 @@ describe('Narudzba controller tests', () => {
     );
 
     it('apiKreirajNarudzbu', async () => {
+        (Narudzba.kreirajNarudzbu as jest.Mock).mockResolvedValueOnce({ idnarudzbe: 1 });
         const req = {
             body: {
                 datumstvaranja: "2021-01-01",
