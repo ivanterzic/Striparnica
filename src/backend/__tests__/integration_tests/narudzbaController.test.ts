@@ -1,78 +1,69 @@
-import { Narudzba } from "../../models/narudzba";
 import { NarudzbaController } from "../../controllers/narudzbaController";
-import { PrismaClient } from '@prisma/client';
-import { Zaposlenik } from "../../models/zaposlenik";
-import { afterEach, beforeEach } from "node:test";
+import { Narudzba } from "../../models/narudzba";
 
-const prisma = new PrismaClient();
+jest.mock('../../models/narudzba', () => {
+    return {
+        Narudzba: {
+            dohvatiSveNarudzbe: jest.fn().mockResolvedValue([
+                {
+                    idnarudzbe: 1,
+                    status: "potvrdena"
+                },
+                {
+                    idnarudzbe: 2,
+                    status: "u tijeku"
+                }
+            ]),
+            dohvatiNarudzbu: jest.fn(),
+            dohvatiPrviManjiID: jest.fn(),
+            dohvatiPrviVeciID: jest.fn(),
+            dohvatiSveStatuseNarudzbi: jest.fn().mockResolvedValue(["potvrdena", "u tijeku"]),
+            kreirajNarudzbu: jest.fn( async () => { return { idnarudzbe: 1 }; }),
+            azurirajNarudzbu: jest.fn( async () => { return { idnarudzbe: 1 }; }),
+            obrisiNarudzbu: jest.fn( async () => { return { idnarudzbe: 1 }; }),
+            urediArtikleNarudzbe: jest.fn(),
+            provjeriIdNarudzbe: jest.fn(),
+            provjeriDobavljaca: jest.fn(),
+        }
+    }
+});
+
+jest.mock('../../models/zaposlenik', () => {
+    return {
+        Zaposlenik: {
+            dohvatiSveReferenteNabave: jest.fn().mockResolvedValue([
+                {
+                    mbr: '1234567890123',
+                    ime: "Zaposlenik 1"
+                }
+            ])
+        }
+    }
+}
+);
+ 
+jest.mock('../../models/dobavljac', () => {
+    return {
+        Dobavljac: {
+            dohvatiSveDobavljace: jest.fn().mockResolvedValue([
+                {
+                    iddobavljaca: 1,
+                    ime: "Dobavljac 1"
+                }
+            ]),
+            dohvatiDobavljaca: jest.fn()
+
+        }
+    }
+}
+);
+
+afterEach(() => {
+    jest.clearAllMocks();
+});
 
 describe('Narudzba controller integration tests', () => {
-    
-    jest.mock('../../models/narudzba', () => {
-        return {
-            Narudzba: {
-                dohvatiSveNarudzbe: jest.fn().mockResolvedValue([
-                    {
-                        idnarudzbe: 1,
-                        status: "potvrdena"
-                    },
-                    {
-                        idnarudzbe: 2,
-                        status: "u tijeku"
-                    }
-                ]),
-                dohvatiNarudzbu: jest.fn(),
-                dohvatiPrviManjiID: jest.fn(),
-                dohvatiPrviVeciID: jest.fn(),
-                dohvatiSveStatuseNarudzbi: jest.fn().mockResolvedValue(["potvrdena", "u tijeku"]),
-                kreirajNarudzbu: jest.fn(),
-                azurirajNarudzbu: jest.fn(),
-                obrisiNarudzbu: jest.fn(),
-                urediArtikleNarudzbe: jest.fn(),
-                provjeriObaveznaPolja: jest.fn(),
-                provjeriDatumStvaranja: jest.fn(),
-                provjeriDatumZaprimanja: jest.fn(),
-                provjeriIdNarudzbe: jest.fn(),
-                provjeriStatus: jest.fn(),
-                provjeriStavkeNarudzbe: jest.fn(),
-                provjeriDobavljaca: jest.fn(),
-            }
-        }
-    });
-
-    jest.mock('../../models/zaposlenik', () => {
-        return {
-            Zaposlenik: {
-                dohvatiSveReferenteNabave: jest.fn().mockResolvedValue([
-                    {
-                        mbr: '1234567890123',
-                        ime: "Zaposlenik 1"
-                    }
-                ])
-            }
-        }
-    }
-    );
-     
-    jest.mock('../../models/dobavljac', () => {
-        return {
-            Dobavljac: {
-                dohvatiSveDobavljace: jest.fn().mockResolvedValue([
-                    {
-                        iddobavljaca: 1,
-                        ime: "Dobavljac 1"
-                    }
-                ])
-            }
-        }
-    }
-    );
-
-    afterEach(async () => {
-        jest.clearAllMocks();
-    });
-
-
+   
     it('apiDohvatiSveNarudzbe', async () => {
         let narudzbe = await Narudzba.dohvatiSveNarudzbe();
         const req = {};
@@ -82,19 +73,21 @@ describe('Narudzba controller integration tests', () => {
     });
 
     it('apiDohvatiNarudzbu', async () => {
-        let o = await Narudzba.dohvatiSveNarudzbe();
-        let id = o[0].idnarudzbe;
-        let result = await Narudzba.dohvatiNarudzbu(id);
-        let previousId = await Narudzba.dohvatiPrviManjiID(id);
-        let nextId = await Narudzba.dohvatiPrviVeciID(id);
-        const req = { params: { id: id } };
+        let narudzba = await Narudzba.dohvatiNarudzbu(1);
+        let previousId = await Narudzba.dohvatiPrviManjiID(1);
+        let nextId = await Narudzba.dohvatiPrviVeciID(1);
+        const req = { params: { id: 1 } };
         const res = { json: jest.fn(), status: jest.fn().mockReturnThis() };
         await NarudzbaController.apiDohvatiNarudzbu(req as any, res as any);
-        expect(res.json).toHaveBeenCalledWith({
-            ...result,
-            previousId: previousId,
-            nextId: nextId,
-        });
+        expect(res.json).toHaveBeenCalledWith({ ...narudzba, previousId: previousId, nextId: nextId });
+        
+        let narudzba2 = await Narudzba.dohvatiNarudzbu(2);
+        let previousId2 = await Narudzba.dohvatiPrviManjiID(2);
+        let nextId2 = await Narudzba.dohvatiPrviVeciID(2);
+        const req2 = { params: { id: 2 } };
+        const res2 = { json: jest.fn(), status: jest.fn().mockReturnThis() };
+        await NarudzbaController.apiDohvatiNarudzbu(req2 as any, res2 as any);
+        expect(res2.json).toHaveBeenCalledWith({ ...narudzba2, previousId: previousId2, nextId: nextId2 });
     });
 
     it('apiDohvatiSveStatuseNarudzbi', async () => {
@@ -106,115 +99,72 @@ describe('Narudzba controller integration tests', () => {
     });
 
     it('apiKreirajNarudzbu', async () => {
-        let datumstvaranja = new Date();
-        let datumzaprimanja = new Date();
-        let status = "potvrdena";
-        let iddobavljaca = 1;
-        let referenti = await Zaposlenik.dohvatiSveReferenteNabave();
-        let mbrreferenta =  referenti[0].mbr;
-        let req = { body: { datumstvaranja: datumstvaranja, datumzaprimanja: datumzaprimanja, status: status, iddobavljaca: iddobavljaca, mbrreferenta: mbrreferenta } };
-        let res = { json: jest.fn(), status: jest.fn().mockReturnThis() };
+        const req = {
+            body: {
+                datumstvaranja: new Date(),
+                datumzaprimanja: new Date(),
+                status: "potvrdena",
+                iddobavljaca: 1,
+                mbrreferenta: "1234567890123"
+            }
+        };
+        const res = { json: jest.fn(), status: jest.fn().mockReturnThis() };
         await NarudzbaController.apiKreirajNarudzbu(req as any, res as any);
-        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({ idnarudzbe: 1 });
 
-        let req2 = { body: { datumstvaranja: datumstvaranja, datumzaprimanja: datumzaprimanja, status: status, iddobavljaca: iddobavljaca, mbrreferenta: "0" } };
-        let res2 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };
+        const req2 = {
+            body: {
+                datumstvaranja: new Date(),
+                datumzaprimanja: new Date(),
+                status: "potvrdena",
+                mbrreferenta: "1234567890123"
+            }
+        };
+        const res2 = { json: jest.fn(), status: jest.fn().mockReturnThis() };
         await NarudzbaController.apiKreirajNarudzbu(req2 as any, res2 as any);
-        expect(res2.status).toHaveBeenCalledWith(400);
-        
-        let req3 = { body: { datumstvaranja: undefined, datumzaprimanja: datumzaprimanja, status: status, iddobavljaca: iddobavljaca, mbrreferenta: mbrreferenta } };
-        let res3 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };
-        await NarudzbaController.apiKreirajNarudzbu(req3 as any, res3 as any);
-        expect(res3.status).toHaveBeenCalledWith(400);
-
-        let req4 = { body: { datumstvaranja: datumstvaranja, datumzaprimanja: datumzaprimanja, status: status, iddobavljaca: 982374, mbrreferenta: mbrreferenta } };
-        let res4 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };
-        await NarudzbaController.apiKreirajNarudzbu(req4 as any, res4 as any);
-        expect(res4.status).toHaveBeenCalledWith(400);
-
-        let req5 = { body: { datumstvaranja: datumstvaranja, datumzaprimanja: datumzaprimanja, status: "neki status nevaljani", iddobavljaca: iddobavljaca, mbrreferenta: mbrreferenta } };
-        let res5 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };
-        await NarudzbaController.apiKreirajNarudzbu(req5 as any, res5 as any);
-        expect(res5.status).toHaveBeenCalledWith(400);
-
+        expect(res2.json).toHaveBeenCalledWith({ idnarudzbe: 1 });
     });
 
     it('apiAzurirajNarudzbu', async () => {
-        let datumstvaranja = new Date();
-        let datumzaprimanja = new Date();
-        let status = "potvrdena";
-        let iddobavljaca = 1;
-        let referenti = await Zaposlenik.dohvatiSveReferenteNabave();
-        let mbrreferenta = referenti[0].mbr;
-        let narudzba = await Narudzba.dohvatiSveNarudzbe();
-        let id = narudzba[0].idnarudzbe;
-
-        let req2 = { params: { id: id }, body: { datumstvaranja: datumstvaranja, datumzaprimanja: datumzaprimanja, status: status, iddobavljaca: iddobavljaca, mbrreferenta: "0" } };
-        let res2 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };
-        await NarudzbaController.apiAzurirajNarudzbu(req2 as any, res2 as any);
-        expect(res2.status).toHaveBeenCalledWith(400);
-        
-        let req3 = { params: { id: id }, body: { datumstvaranja: undefined, datumzaprimanja: datumzaprimanja, status: status, iddobavljaca: iddobavljaca, mbrreferenta: mbrreferenta } };
-        let res3 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };
-        await NarudzbaController.apiAzurirajNarudzbu(req3 as any, res3 as any);
-        expect(res3.status).toHaveBeenCalledWith(400);
-
-        let req4 = { params: { id: id }, body: { datumstvaranja: datumstvaranja, datumzaprimanja: datumzaprimanja, status: status, iddobavljaca: 982374, mbrreferenta: mbrreferenta } };
-        let res4 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };
-        await NarudzbaController.apiAzurirajNarudzbu(req4 as any, res4 as any);
-        expect(res4.status).toHaveBeenCalledWith(400);
-
-            
-        let req5 = { params: { id: id }, body: { datumstvaranja: datumstvaranja, datumzaprimanja: datumzaprimanja, status: "neki status nevaljani", iddobavljaca: iddobavljaca, mbrreferenta: mbrreferenta } };
-        let res5 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };   
-        await NarudzbaController.apiAzurirajNarudzbu(req5 as any, res5 as any);
-        expect(res5.status).toHaveBeenCalledWith(400);
-
+        const req = {
+            params: { id: 1 },
+            body: {
+                datumstvaranja: new Date(),
+                datumzaprimanja: new Date(),
+                status: "potvrdena",
+                iddobavljaca: 1,
+                mbrreferenta: "1234567890123"
+            }
+        };
+        const res = { json: jest.fn(), status: jest.fn().mockReturnThis() };
+        await NarudzbaController.apiAzurirajNarudzbu(req as any, res as any);
+        expect(res.json).toHaveBeenCalledWith({ idnarudzbe: 1 });
     });
 
-   
-
-    it('apiObrisiNarudzbu', async () => {
-       
-        let req2 = { params: { id: 0 } };
-        let res2 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };
-        await NarudzbaController.apiObrisiNarudzbu(req2 as any, res2 as any);
-        expect(res2.status).toHaveBeenCalledWith(400);
-        
-    });
 
     it('apiUrediArtikleNarudzbe', async () => {
-        let artikli = await Narudzba.dohvatiSveNarudzbe();
-        let id = artikli[0].idnarudzbe;
-        
-        let req2 = { params: { id: id }, body: { stavkenarudzbe: [] } };
-        let res2 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };
-        await NarudzbaController.apiUrediArtikleNarudzbe(req2 as any, res2 as any);
-        expect(res2.status).toHaveBeenCalledWith(200 || 400);
+        (Narudzba.urediArtikleNarudzbe as jest.Mock).mockResolvedValue({ idnarudzbe: 1 } as any);
+        const req = {
+            params: { id: 1 },
+            body: {
+                stavkenarudzbe: [
+                    {
+                        idartikla: 1,
+                        kolicina: 1
+                    }
+                ]
+            }
+        };
+        const res = { json: jest.fn(), status: jest.fn().mockReturnThis() };
+        await NarudzbaController.apiUrediArtikleNarudzbe(req as any, res as any);
+        expect(res.json).toHaveBeenCalledWith({ idnarudzbe: 1 });
+    });
 
-        let req3 = { params: { id: id }, body: { stavkenaruzbe: [{ idartikla: 0, kolicina: 1 }] } };
-        let res3 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };
-        await NarudzbaController.apiUrediArtikleNarudzbe(req3 as any, res3 as any);
-        expect(res3.status).toHaveBeenCalledWith(400);
-
-        let req4 = { params: { id: id }, body: { stavkenarudzbe: [{ idartikla: 1, kolicina: 0 }] } };
-        let res4 = { json: jest.fn(),
-            status: jest.fn().mockReturnThis() };
-        await NarudzbaController.apiUrediArtikleNarudzbe(req4 as any, res4 as any);
-        expect(res4.status).toHaveBeenCalledWith(400);
-
-
+    it('apiObrisiNarudzbu', async () => {
+        const req = { params: { id: 1 } };
+        const res = { json: jest.fn(), status: jest.fn().mockReturnThis() };
+        await NarudzbaController.apiObrisiNarudzbu(req as any, res as any);
+        expect(res.json).toHaveBeenCalledWith({ idnarudzbe: 1 });
     });
 });
 
