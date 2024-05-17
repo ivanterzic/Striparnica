@@ -1,6 +1,8 @@
 <template>
+    
     <div>
         <h2>Lista narudžbi</h2>
+        <div class="form-button nav-button back-blue margin-bottom" @click="showModal = !showModal">Dodaj narudžbu</div>
         <Search
             v-if="mogucnosti"
             :zaglavlja="zaglavlja"
@@ -9,7 +11,6 @@
             @ocisti-filter="ocistiFilter"
         />
         <Table :zaglavlja="zaglavlja" :retci="filteredNarudzbe" :content="'narudzbe'" />
-        <div class="form-button nav-button back-blue margin-bottom" @click="showModal = !showModal">Dodaj narudžbu</div>
         <NovaNarudzba
             v-if="mogucnosti"
             :showModal="showModal"
