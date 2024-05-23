@@ -47,7 +47,7 @@ const narudzbaClass =
                     }
                     await Narudzba.provjeriDobavljaca(iddobavljaca);
                     await Zaposlenik.provjeriReferentaNabave(mbrreferenta);
-                    Narudzba.provjeriStatus(status);
+                    Narudzba.provjeriStatus(status, datumzaprimanja);
     
                     let result = await prisma.narudzba.create({
                         data: {
@@ -197,7 +197,7 @@ const narudzbaClass =
                     }
                     await Narudzba.provjeriDobavljaca(iddobavljaca);
                     await Zaposlenik.provjeriReferentaNabave(mbrreferenta);
-                    Narudzba.provjeriStatus(status);
+                    Narudzba.provjeriStatus(status, datumzaprimanja);
 
                     let result = await prisma.narudzba.update({
                         where: {
@@ -329,10 +329,17 @@ const narudzbaClass =
                 
             }
 
-            static provjeriStatus(status: string) {       
+            static provjeriStatus(status: string, datumzaprimanja?: Date | null) {       
                 if (!statusiNarudzbe.includes(status)) {
                     throw 'Status nije među validnim statusima narudžbe.';
                 }
+                if (status == 'potvrdena' && !datumzaprimanja) {
+                    throw 'Narudžba ne može biti potvrđena bez datuma zaprimanja.';
+                }
+                if (status == 'nepotpuna' && !datumzaprimanja) {
+                    throw 'Narudžba ne može biti definirana kao nepotpuna bez datuma zaprimanja.';
+                }
+
             }
 
             static async provjeriIdNarudzbe(id: number | undefined) {
