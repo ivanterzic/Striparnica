@@ -54,6 +54,7 @@ import ArtikalForm from "../components/ArtikalForm.vue";
 import { Artikal } from "../types/Artikal";
 import { Narudzba } from "../types/Narudzba";
 import { Zaglavlje } from "../types/Zaglavlje";
+import { Mogucnosti } from "../types/Mogucnosti";
 
 export default defineComponent({
     components: { NarudzbaForm, Table, ArtikalForm },
@@ -70,7 +71,7 @@ export default defineComponent({
             prethodnaNarudzba: null as number | null,
             sljedecaNarudzba: null as number | null,
             artikli: [] as Artikal[],
-            mogucnosti: null,
+            mogucnosti: null as Mogucnosti | null,
             zaglavlja: [
                 { displayName: "Naziv artikla", sqlName: "naziv" },
                 { displayName: "Opis artikla", sqlName: "opis" },

@@ -57,6 +57,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Zaglavlje } from "../types/Zaglavlje";
+import { Mogucnosti } from "../types/Mogucnosti";
 
 export default defineComponent({
     props: {
@@ -65,7 +66,7 @@ export default defineComponent({
             required: true,
         },
         mogucnosti: {
-            type: Object,
+            type: Object as PropType<Mogucnosti>,
             required: true,
         },
     },

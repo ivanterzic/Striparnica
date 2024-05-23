@@ -1,7 +1,8 @@
 import fetchMock from "jest-fetch-mock";
-import { mount, flushPromises, shallowMount } from "@vue/test-utils";
+import { mount, flushPromises } from "@vue/test-utils";
 import NarudzbaView from "../views/NarudzbaView.vue";
 import router from "../router/index";
+import { Mogucnosti } from "@/types/Mogucnosti";
 
 fetchMock.enableMocks();
 
@@ -34,7 +35,7 @@ const narudzba = {
     nextId: 5,
 };
 
-const mogucnosti = {
+const mogucnosti: Mogucnosti = {
     mbrreferanata: ["1006474746334"],
     statusi: ["potvrdena", "u tijeku", "nepotpuna"],
     dobavljaci: [

@@ -1,6 +1,7 @@
 import { shallowMount } from "@vue/test-utils";
 import NarudzbaForm from "../components/NarudzbaForm.vue";
 import { Narudzba } from "@/types/Narudzba";
+import { Mogucnosti } from "@/types/Mogucnosti";
 import fetchMock from "jest-fetch-mock";
 
 fetchMock.enableMocks();
@@ -18,7 +19,7 @@ const narudzba: Narudzba = {
     mbrreferenta: "1006474746334",
 };
 
-const mogucnosti = {
+const mogucnosti: Mogucnosti = {
     mbrreferanata: ["1006474746334"],
     statusi: ["potvrdena", "u tijeku", "nepotpuna"],
     dobavljaci: [

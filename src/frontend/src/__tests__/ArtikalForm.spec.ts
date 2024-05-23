@@ -45,7 +45,7 @@ describe("ArtikalForm.vue", () => {
         expect(wrapper.emitted("close")).toBeTruthy();
     });
 
-    it("Punjenje obrasca sa podacima artikla na poziv metode fillModal", async () => {
+    it("Punjenje obrasca s podacima artikla na poziv metode fillModal", async () => {
         const wrapper = shallowMount(ArtikalForm, {
             props: { showModal, sviArtikli: artikli },
         });
@@ -85,7 +85,7 @@ describe("ArtikalForm.vue", () => {
         });
     });
 
-    it("emits novi-artikal event with form data and resets form when dodajArtikal is called", async () => {
+    it("Emitiranje novi-artikal dogadaja i ciscenje obrasca na poziv metode dodajArtikal", async () => {
         const wrapper = shallowMount(ArtikalForm, {
             props: { showModal, sviArtikli: artikli },
         });

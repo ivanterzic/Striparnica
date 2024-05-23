@@ -2,6 +2,7 @@ import { shallowMount } from "@vue/test-utils";
 import Search from "../components/Search.vue";
 import { Zaglavlje } from "@/types/Zaglavlje";
 import { SearchParams } from "@/types/SearchParams";
+import { Mogucnosti } from "@/types/Mogucnosti";
 
 const zaglavlja: Zaglavlje[] = [
     { displayName: "ID narudžbe", sqlName: "idnarudzbe" },
@@ -9,7 +10,7 @@ const zaglavlja: Zaglavlje[] = [
     { displayName: "Datum zaprimanja", sqlName: "datumzaprimanja" },
 ];
 
-const mogucnosti = {
+const mogucnosti: Mogucnosti = {
     mbrreferanata: ["1006474746334"],
     statusi: ["potvrdena", "u tijeku", "nepotpuna"],
     dobavljaci: [

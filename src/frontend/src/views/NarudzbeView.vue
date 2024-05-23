@@ -1,5 +1,4 @@
 <template>
-    
     <div>
         <h2>Lista narudžbi</h2>
         <div class="form-button nav-button back-blue margin-bottom" @click="showModal = !showModal">Dodaj narudžbu</div>
@@ -23,9 +22,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+//types
 import { Narudzba } from "../types/Narudzba";
 import { Zaglavlje } from "../types/Zaglavlje";
 import { SearchParams } from "../types/SearchParams";
+import { Mogucnosti } from "../types/Mogucnosti";
+//components
 import Table from "../components/Table.vue";
 import Search from "../components/Search.vue";
 import NovaNarudzba from "../components/NovaNarudzba.vue";
@@ -38,7 +40,7 @@ export default defineComponent({
             narudzbe: [] as Narudzba[],
             filteredNarudzbe: [] as Narudzba[],
             mogucnostiURL: "http://localhost:3000/narudzbe/kljucevi",
-            mogucnosti: null,
+            mogucnosti: null as Mogucnosti | null,
             zaglavlja: [
                 { displayName: "ID narudžbe", sqlName: "idnarudzbe" },
                 { displayName: "Datum stvaranja", sqlName: "datumstvaranja" },

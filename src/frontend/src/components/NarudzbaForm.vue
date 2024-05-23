@@ -34,6 +34,7 @@ import { defineComponent, PropType } from "vue";
 //types
 import { Narudzba } from "../types/Narudzba";
 import { Zaglavlje } from "../types/Zaglavlje";
+import { Mogucnosti } from "../types/Mogucnosti";
 
 export default defineComponent({
     props: {
@@ -42,7 +43,7 @@ export default defineComponent({
             required: true,
         },
         mogucnosti: {
-            type: Object,
+            type: Object as PropType<Mogucnosti>,
             required: true,
         },
     },
