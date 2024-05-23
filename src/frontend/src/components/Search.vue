@@ -1,6 +1,6 @@
 <template>
     <div>
-        <select v-model="searchParams.key" class="search-field">
+        <select v-model="searchParams.key" class="search-field" @change="searchParams.value = ''">
             <option v-for="(zaglavlje, index) in zaglavlja" :key="index" :value="zaglavlje.sqlName">
                 {{ zaglavlje.displayName }}
             </option>
