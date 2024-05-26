@@ -1,5 +1,3 @@
-import { Zaposlenik } from '../models/zaposlenik';
-import { Artikal } from '../models/artikal';
 import {Narudzba} from '../models/narudzba';
 import { afterEach } from 'node:test';
 
