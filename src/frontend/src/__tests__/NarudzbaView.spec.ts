@@ -91,7 +91,7 @@ describe("NarudzbaView.vue", () => {
         expect(wrapper.vm.mogucnosti).toEqual(mogucnosti);
     });
 
-    it("Ispravno dodavanje artikla u narudžbu", async () => {
+    it("Ispravno proslijeđivanje artikala u formu za dodavanje artikla", async () => {
         fetchMock.mockResponses(JSON.stringify(narudzba), JSON.stringify(mogucnosti), JSON.stringify(artikli));
 
         const wrapper = mount(NarudzbaView, {
