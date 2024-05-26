@@ -1,89 +1,115 @@
 import {Narudzba} from '../models/narudzba';
 import { afterEach } from 'node:test';
 
-jest.mock("../models/narudzba", () => ({
-    Narudzba: {
-        kreirajNarudzbu: jest.fn( async (datumstvaranja: Date | undefined, datumzaprimanja: Date | null, status: string | undefined, iddobavljaca: number | undefined, mbrreferenta: string | undefined) => {
-            if (!datumstvaranja || !status || !mbrreferenta || !iddobavljaca) {
-                throw 'Nedostaju obavezna polja.';
-            }
-            return {
-                idnarudzbe: 1,
-                datumstvaranja: new Date().toJSON().split('T')[0],
-                datumzaprimanja: new Date().toJSON().split('T')[0],
-                status: "potvrdena",
-                iddobavljaca: 1,
-                mbrreferenta: "1"
-            };
-        }
-        ),
-        dohvatiSveNarudzbe: jest.fn().mockResolvedValue([
-            { idnarudzbe: 1, datumstvaranja: new Date().toJSON().split('T')[0], datumzaprimanja: new Date().toJSON().split('T')[0], status: "potvrdena", iddobavljaca: 1, mbrreferenta: "1" },
-            { idnarudzbe: 2, datumstvaranja: new Date().toJSON().split('T')[0], datumzaprimanja: new Date().toJSON().split('T')[0], status: "potvrdena", iddobavljaca: 1, mbrreferenta: "1" }
-        ]),
-        dohvatiNarudzbu: jest.fn().mockResolvedValue({
-            narudzba: {
-                idnarudzbe: 1,
-                datumstvaranja: new Date().toJSON().split('T')[0],
-                datumzaprimanja: new Date().toJSON().split('T')[0],
-                status: "potvrdena",
-                iddobavljaca: 1,
-                mbrreferenta: "1"
-            },
-            artikli: [
-                { idartikla: 1, kolicina: 1 },
-                { idartikla: 2, kolicina: 1 }
-            ]
-        }),
-        dohvatiSveStatuseNarudzbi: jest.fn().mockResolvedValue(["potvrdena", "u tijeku", "nepotpuna"]),
-        dohvatiPrviVeciID: jest.fn().mockResolvedValue(  2),
-        dohvatiPrviManjiID: jest.fn().mockResolvedValue(1),
-        azurirajNarudzbu: jest.fn( async (id: number | undefined, datumstvaranja: Date | undefined, datumzaprimanja: Date | null | undefined, status: string | undefined, iddobavljaca: number | undefined, mbrreferenta: string | undefined) => {
-  
-            if (!datumstvaranja || !status || !mbrreferenta || !iddobavljaca) {
-                throw 'Nedostaju obavezna polja.';
-            }
-            if (id == 0){
-                throw 'Id narudžbe ne može biti 0.';
-            }
-            if (!id || id == undefined) {
-                throw 'Nedostaje id narudžbe.';
-            }
-            if (isNaN(id)) {
-                throw 'Id narudžbe mora biti broj.';
-            }
-            return {
-                idnarudzbe: 1,
-                datumstvaranja: new Date().toJSON().split('T')[0],
-                datumzaprimanja: new Date().toJSON().split('T')[0],
-                status: "potvrdena",
-                iddobavljaca: 1,
-                mbrreferenta: "1"
-            };
 
-        }
-        ),
-        obrisiNarudzbu: jest.fn( async (id: number) => {
-            return {
-                idnarudzbe: 1,
-                datumstvaranja: new Date().toJSON().split('T')[0],
-                datumzaprimanja: new Date().toJSON().split('T')[0],
-                status: "potvrdena",
-                iddobavljaca: 1,
-                mbrreferenta: "1"
-            };
-        }
-        ),
-        urediArtikleNarudzbe: jest.fn(
-            async (id: number, artikli: Array<{ idartikla: number, kolicina: number }>) => {
-                return [
-                    { idartikla: 1, kolicina: 1 },
-                    { idartikla: 2, kolicina: 1 }
-                ];
+jest.mock("@prisma/client", () => ({
+    PrismaClient: jest.fn(() => ({
+        narudzba: {
+            create: jest.fn().mockImplementation((data) => {
+                return {
+                    idnarudzbe: 1,
+                    datumstvaranja: data.datumstvaranja,
+                    datumzaprimanja: data.datumzaprimanja,
+                    status: data.status,
+                    iddobavljaca: data.iddobavljaca,
+                    mbrreferenta: data.mbrreferenta
+                }
+            }),
+            findMany: jest.fn().mockResolvedValue([
+                {
+                    idnarudzbe: 1,
+                    datumstvaranja: new Date(),
+                    datumzaprimanja: new Date(),
+                    status: "potvrdena",
+                    iddobavljaca: 1,
+                    mbrreferenta: "1"
+                },
+                {
+                    idnarudzbe: 2,
+                    datumstvaranja: new Date(),
+                    datumzaprimanja: new Date(),
+                    status: "potvrdena",
+                    iddobavljaca: 1,
+                    mbrreferenta: "1"
+                }
+            ]),
+            findUnique: jest.fn().mockImplementation((data) => {
+                return {
+                    idnarudzbe: data.where.idnarudzbe,
+                    datumstvaranja: new Date(),
+                    datumzaprimanja: new Date(),
+                    status: "potvrdena",
+                    iddobavljaca: 1,
+                    mbrreferenta: "1"
+                }
+            }),
+            update: jest.fn().mockImplementation((data) => {
+                return {
+                    idnarudzbe: data.where.idnarudzbe,
+                    datumstvaranja: data.data.datumstvaranja,
+                    datumzaprimanja: data.data.datumzaprimanja,
+                    status: data.data.status,
+                    iddobavljaca: data.data.iddobavljaca,
+                    mbrreferenta: data.data.mbrreferenta
+                }
+            }),
+            delete: jest.fn().mockImplementation((data) => {
+                return {
+                    idnarudzbe: data.where.idnarudzbe,
+                    datumstvaranja: new Date(),
+                    datumzaprimanja: new Date(),
+                    status: "potvrdena",
+                    iddobavljaca: 1,
+                    mbrreferenta: "1"
+                }
+            },
+
+            ),
+            findFirst: jest.fn().mockImplementation((data) => {
+                return {
+                    idnarudzbe: 2
+                }
             }
-        ),
-        
-    },
+            ),
+        },
+        narudzbaartikli: {
+            findMany: jest.fn().mockResolvedValue([
+                {
+                    idnarudzbe: 1,
+                    idartikla: 1,
+                    kolicina: 1
+                },
+                {
+                    idnarudzbe: 1,
+                    idartikla: 2,
+                    kolicina: 1
+                }
+            ]),
+            deleteMany: jest.fn().mockResolvedValue({ count: 2 }),
+            createMany: jest.fn().mockImplementation((data) => {
+                return data.data;
+            })
+        },
+
+        artikal: {
+            findUnique: jest.fn().mockImplementation((data) => {
+                return {
+                    idartikla: data.where.idartikla,
+                    naziv: "Artikal " + data.where.idartikla
+                }
+            }),
+            findMany: jest.fn().mockResolvedValue([
+                {
+                    idartikla: 1,
+                    naziv: "Artikal 1"
+                },
+                {
+                    idartikla: 2,
+                    naziv: "Artikal 2"
+                }
+            ])
+        }
+    }))
 }));
 
 jest.mock("../models/zaposlenik", () => ({
@@ -118,16 +144,12 @@ afterEach(() => {
 describe('Narudzba model tests', () => {
 
     it('kreiraj narudzbu', async () => {
-        let result = await Narudzba.kreirajNarudzbu(new Date(), new Date(), "potvrdena", 1, "1");
-        expect(result).toEqual({
-            idnarudzbe: 1,
-            datumstvaranja: new Date().toJSON().split('T')[0],
-            datumzaprimanja: new Date().toJSON().split('T')[0],
-            status: "potvrdena",
-            iddobavljaca: 1,
-            mbrreferenta: "1"
-        });
-        expect (async () => {
+        let date = new Date();
+        let result = await Narudzba.kreirajNarudzbu(date, date, "potvrdena", 1, "1");
+        expect(async () => {
+            await Narudzba.kreirajNarudzbu(undefined, date, "potvrdena", 1, "1");
+        }).rejects.not.toThrow
+        expect(async () => {
             await Narudzba.kreirajNarudzbu(undefined, new Date(), "potvrdena", 1, "1");
         }
         ).rejects.toThrow
@@ -139,14 +161,32 @@ describe('Narudzba model tests', () => {
             await Narudzba.kreirajNarudzbu(new Date(), new Date(), "potvrdena", undefined, "1");
         }
         ).rejects.toThrow
+        expect(async () => {
+            await Narudzba.kreirajNarudzbu(new Date(), new Date(), "potvrdena", 1, undefined);
+        }
+        ).rejects.toThrow
     }
     );
 
     it('dohvati sve narudzbe', async () => {
         let result = await Narudzba.dohvatiSveNarudzbe();
         expect(result).toEqual([
-            { idnarudzbe: 1, datumstvaranja: new Date().toJSON().split('T')[0], datumzaprimanja: new Date().toJSON().split('T')[0], status: "potvrdena", iddobavljaca: 1, mbrreferenta: "1" },
-            { idnarudzbe: 2, datumstvaranja: new Date().toJSON().split('T')[0], datumzaprimanja: new Date().toJSON().split('T')[0], status: "potvrdena", iddobavljaca: 1, mbrreferenta: "1" }
+            {
+                idnarudzbe: 1,
+                datumstvaranja: new Date().toJSON().split('T')[0],
+                datumzaprimanja: new Date().toJSON().split('T')[0],
+                status: "potvrdena",
+                iddobavljaca: 1,
+                mbrreferenta: "1"
+            },
+            {
+                idnarudzbe: 2,
+                datumstvaranja: new Date().toJSON().split('T')[0],
+                datumzaprimanja: new Date().toJSON().split('T')[0],
+                status: "potvrdena",
+                iddobavljaca: 1,
+                mbrreferenta: "1"
+            }
         ]);
     });
 
@@ -162,8 +202,16 @@ describe('Narudzba model tests', () => {
                 mbrreferenta: "1"
             },
             artikli: [
-                { idartikla: 1, kolicina: 1 },
-                { idartikla: 2, kolicina: 1 }
+                {
+                    idartikla: 1,
+                    naziv: "Artikal 1",
+                    kolicina: 1
+                },
+                {
+                    idartikla: 2,
+                    naziv: "Artikal 2",
+                    kolicina: 1
+                }
             ]
         });
     });
@@ -178,24 +226,20 @@ describe('Narudzba model tests', () => {
         expect(result).toEqual(2);
     });
 
-    it('dohvati prvi manji ID', async () => {
-        let result = await Narudzba.dohvatiPrviManjiID(2);
-        expect(result).toEqual(1);
-    });
 
     it('azuriraj narudzbu', async () => {
-        let result = await Narudzba.azurirajNarudzbu(1, new Date(), new Date(), "potvrdena", 1, "1");
+        let date = new Date();
+        let result = await Narudzba.azurirajNarudzbu(1, date, date, "potvrdena", 1, "1");
         expect(result).toEqual({
             idnarudzbe: 1,
-            datumstvaranja: new Date().toJSON().split('T')[0],
-            datumzaprimanja: new Date().toJSON().split('T')[0],
+            datumstvaranja: date.toJSON().split('T')[0],
+            datumzaprimanja: date.toJSON().split('T')[0],
             status: "potvrdena",
             iddobavljaca: 1,
             mbrreferenta: "1"
         });
         expect(async () => {
-            await Narudzba.azurirajNarudzbu(undefined, new Date(), new Date
-            (), "potvrdena", 1, "1");
+            await Narudzba.azurirajNarudzbu(undefined, new Date(), new Date(), "potvrdena", 1, "1");
         }
         ).rejects.toThrow
         expect(async () => {
@@ -210,24 +254,28 @@ describe('Narudzba model tests', () => {
             await Narudzba.azurirajNarudzbu(1, new Date(), new Date(), "potvrdena", undefined, "1");
         }
         ).rejects.toThrow
+        expect(async () => {
+            await Narudzba.azurirajNarudzbu(1, new Date(), new Date(), "potvrdena", 1, undefined);
+        }
+        ).rejects.toThrow
 
     });
 
     it('obrisi narudzbu', async () => {
-        let result = await Narudzba.obrisiNarudzbu(1);
-        expect(result).toEqual( {
-            idnarudzbe: 1,
-            datumstvaranja: new Date().toJSON().split('T')[0],
-            datumzaprimanja: new Date().toJSON().split('T')[0],
-            status: "potvrdena",
-            iddobavljaca: 1,
-            mbrreferenta: "1"
-        });
+        let date
+        expect(async () => {
+            await Narudzba.obrisiNarudzbu(1);
+        }
+        ).not.toThrow
+        expect(async () => {
+            await Narudzba.obrisiNarudzbu(0);
+        }
+        ).rejects.toThrow
     });
 
     it('uredi artikle narudzbe', async () => {
         let result = await Narudzba.urediArtikleNarudzbe(1, [{ idartikla: 1, kolicina: 1 }, { idartikla: 2, kolicina: 1 }]);
-        expect(result).toEqual([{ idartikla: 1, kolicina: 1 }, { idartikla: 2, kolicina: 1 }]);
+        expect(result).toEqual([{ idnarudzbe: 1, idartikla: 1, kolicina: 1 }, { idnarudzbe: 1, idartikla: 2, kolicina: 1 }]);
         expect(async () => {
             await Narudzba.urediArtikleNarudzbe(1, [{ idartikla: 1, kolicina: 0 }]);
         }

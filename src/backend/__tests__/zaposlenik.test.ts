@@ -1,18 +1,25 @@
-import { Zaposlenik } from "../models/zaposlenik";
 
-jest.mock("../models/zaposlenik", () => ({
-    Zaposlenik: {
-        dohvatiSveZaposlenike: jest.fn().mockResolvedValue([
-            { mbr: "1", email: "test1@example.com", oib: "11111111111" },
-            { mbr: "2", email: "test2@example.com", oib: "22222222222" },
-        ]),
-        dohvatiZaposlenika: jest.fn(),
-        dohvatiZaposlenikaPoEmailu: jest.fn(),
-        dohvatiZaposlenikaPoOibu: jest.fn(),
-        dohvatiSveReferenteNabave: jest.fn(),
-        provjeriReferentaNabave: jest.fn(),
-    },
-}));
+import { Zaposlenik } from "../models/zaposlenik";
+jest.mock('@prisma/client', () => {
+    const prismaClientMock = {
+        zaposlenik: {
+            findMany: jest.fn().mockResolvedValue([
+                { mbr: "1", name: "Zaposlenik 1" },
+                { mbr: "2", name: "Zaposlenik 2" },
+            ]),
+            findUnique: jest.fn((args) => {
+                if (args.where.mbr === "1") {
+                    return { mbr: "1", name: "Zaposlenik 1" };
+                }
+                return undefined;
+            }
+            )
+        }
+    };
+    return {
+        PrismaClient: jest.fn(() => prismaClientMock)
+    };
+});
 
 describe('Zaposlenik model tests', () => {
     test('dohvati sve zaposlenike', async () => {
@@ -21,12 +28,12 @@ describe('Zaposlenik model tests', () => {
     } );
 
     test('dohvati zaposlenika', async () => {
-        Zaposlenik.dohvatiZaposlenika = jest.fn().mockResolvedValueOnce({ mbr: "1", email: "test1@example.com", oib: "11111111111" });
         let zaposlenik = await Zaposlenik.dohvatiZaposlenika("1");
         expect(zaposlenik).not.toBeNull();
-        zaposlenik = await Zaposlenik.dohvatiZaposlenika("4");
-        expect(zaposlenik).toBeUndefined
-
+        expect(async () => {
+            await Zaposlenik.dohvatiZaposlenika("3");
+        }
+        ).toThrow
     }
     );
 
